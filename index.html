@@ -398,6 +398,21 @@
       margin-top: 8px;
     }
 
+    .about-ad-link {
+      padding: 8px 16px;
+      background: #f0f2f5;
+      border-top: 1px solid #e4e6eb;
+      text-align: center;
+      font-size: 13px;
+      color: #65676b;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .about-ad-link:hover {
+      background: #e4e6eb;
+    }
+
     .loading {
       text-align: center;
       padding: 50px;
@@ -461,7 +476,7 @@
     }
 
     .modal-header {
-      background: #1877f2;
+      background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
       color: white;
       padding: 25px 30px;
       display: flex;
@@ -790,14 +805,14 @@
     function createAdCard(ad, index) {
       const card = document.createElement('div');
       card.className = 'ad-card';
-      card.onclick = function() { openDetailModal(ad); };
+      card.dataset.index = index;
 
       const imageUrl = getImageUrl(ad);
       const brandName = ad['Brand/Advertiser'] || 'Unknown Brand';
       const brandInitial = brandName.charAt(0).toUpperCase();
 
       // Truncate body text for preview
-      const bodyText = ad['Ad Copy'] || '';
+      const bodyText = (ad['Ad Copy'] || '').trim();
       const bodyLength = bodyText.length;
       const shouldCollapse = bodyLength > 125;
       const displayBody = shouldCollapse ? bodyText.substring(0, 125) + '...' : bodyText;
@@ -836,7 +851,7 @@
 
         <!-- Body Copy -->
         ${bodyText ? `
-          <div class="ad-body-text">
+          <div class="ad-body-text" data-full-text="${bodyText.replace(/"/g, '&quot;')}" data-expanded="false">
             ${displayBody}${shouldCollapse ? ' <span class="see-more">See more</span>' : ''}
           </div>
         ` : ''}
@@ -873,7 +888,47 @@
           </div>
           ${ad['Rating'] ? `<div class="ad-rating">${ad['Rating']}</div>` : ''}
         </div>
+        
+        <!-- About This Ad Link -->
+        <div class="about-ad-link">About this ad</div>
       `;
+      
+      // Add event listeners after adding to DOM
+      setTimeout(() => {
+        // Handle See more/less toggle
+        const bodyTextEl = card.querySelector('.ad-body-text');
+        const seeMoreBtn = card.querySelector('.see-more');
+        if (seeMoreBtn && bodyTextEl) {
+          seeMoreBtn.onclick = function(e) {
+            e.stopPropagation();
+            const isExpanded = bodyTextEl.dataset.expanded === 'true';
+            const fullText = bodyTextEl.dataset.fullText;
+            
+            if (isExpanded) {
+              bodyTextEl.innerHTML = displayBody + ' <span class="see-more">See more</span>';
+              bodyTextEl.dataset.expanded = 'false';
+            } else {
+              bodyTextEl.innerHTML = fullText + ' <span class="see-more">See less</span>';
+              bodyTextEl.dataset.expanded = 'true';
+            }
+            
+            // Re-attach event listener
+            const newBtn = bodyTextEl.querySelector('.see-more');
+            if (newBtn) {
+              newBtn.onclick = arguments.callee;
+            }
+          };
+        }
+        
+        // Handle About this ad click
+        const aboutLink = card.querySelector('.about-ad-link');
+        if (aboutLink) {
+          aboutLink.onclick = function(e) {
+            e.stopPropagation();
+            openDetailModal(ad);
+          };
+        }
+      }, 0);
 
       return card;
     }
@@ -975,7 +1030,6 @@
         `<p><strong>Ad Link:</strong> <a href="${ad['Ad Link']}" target="_blank">${ad['Ad Link']}</a></p>` : '';
       
       const content = `
-        ${imageHtml}
         <div class="detail-section">
           <h3>📊 Classification</h3>
           <div class="ad-meta-tags">
@@ -986,13 +1040,10 @@
             ${ad['Hook Type'] ? `<span class="tag">${ad['Hook Type']}</span>` : ''}
             ${ad['Visual Style'] ? `<span class="tag">${ad['Visual Style']}</span>` : ''}
           </div>
-          <p style="margin-top: 10px;"><strong>Rating:</strong> ${ad['Rating'] || 'Not rated'}</p>
         </div>
         <div class="detail-section">
-          <h3>✍️ Ad Copy</h3>
-          <p><strong>Headline:</strong> ${ad['Ad Headline'] || 'N/A'}</p>
-          <p style="margin-top: 10px;"><strong>Body:</strong><br>${ad['Ad Copy'] || 'N/A'}</p>
-          <p style="margin-top: 10px;"><strong>CTA:</strong> ${ad['CTA Button Text'] || 'N/A'}</p>
+          <h3>⭐ Rating</h3>
+          <p>${ad['Rating'] || 'Not rated'}</p>
         </div>
         <div class="detail-section">
           <h3>💡 Analysis</h3>
