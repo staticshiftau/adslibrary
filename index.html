@@ -16,7 +16,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
+      background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
       min-height: 100vh;
       padding: 20px;
     }
@@ -401,7 +401,7 @@
     .loading {
       text-align: center;
       padding: 50px;
-      color: #65676b;
+      color: white;
       font-size: 1.2em;
       font-weight: 500;
     }
@@ -656,26 +656,33 @@
     // ============================================
     // IMAGE URL CONVERSION
     // ============================================
-    function convertDriveUrl(url) {
-      if (!url) return '';
+    function getImageUrl(ad) {
+      // First try the image preview column if it exists
+      if (ad['Image Preview'] && ad['Image Preview'].trim()) {
+        return ad['Image Preview'];
+      }
+      
+      // Fallback to converting Creative URL
+      const creativeUrl = ad['Creative URL'];
+      if (!creativeUrl) return '';
       
       // If already a direct URL, return as-is
-      if (url.includes('drive.google.com/uc?id=')) {
-        return url;
+      if (creativeUrl.includes('lh3.googleusercontent.com') || creativeUrl.includes('drive.google.com/uc?id=')) {
+        return creativeUrl;
       }
       
       // Extract file ID from various Drive URL formats
       let fileId = null;
       
       // Format: https://drive.google.com/file/d/FILE_ID/view
-      let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      let match = creativeUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
       if (match) {
         fileId = match[1];
       }
       
       // Format: https://drive.google.com/open?id=FILE_ID
       if (!fileId) {
-        match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        match = creativeUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
         if (match) {
           fileId = match[1];
         }
@@ -683,7 +690,7 @@
       
       // Format: https://drive.google.com/drive/folders/.../FILE_ID
       if (!fileId) {
-        match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        match = creativeUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
         if (match) {
           fileId = match[1];
         }
@@ -693,7 +700,7 @@
         return `https://drive.google.com/uc?export=view&id=${fileId}`;
       }
       
-      return url;
+      return creativeUrl;
     }
 
     // ============================================
@@ -785,7 +792,7 @@
       card.className = 'ad-card';
       card.onclick = function() { openDetailModal(ad); };
 
-      const imageUrl = convertDriveUrl(ad['Creative URL']);
+      const imageUrl = getImageUrl(ad);
       const brandName = ad['Brand/Advertiser'] || 'Unknown Brand';
       const brandInitial = brandName.charAt(0).toUpperCase();
 
@@ -961,7 +968,7 @@
       currentAdForDetail = ad;
       document.getElementById('detailBrand').textContent = ad['Brand/Advertiser'];
       
-      const imageUrl = convertDriveUrl(ad['Creative URL']);
+      const imageUrl = getImageUrl(ad);
       const imageHtml = imageUrl ? `<img src="${imageUrl}" class="detail-image" alt="Ad">` : '';
       
       const adLinkSection = ad['Ad Link'] ? 
