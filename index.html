@@ -15,8 +15,8 @@
     }
 
     body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
       min-height: 100vh;
       padding: 20px;
     }
@@ -29,20 +29,20 @@
     .header {
       background: white;
       padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
     }
 
     .header h1 {
-      color: #1a2332;
+      color: #050505;
       font-size: 2.5em;
       margin-bottom: 10px;
       font-weight: 700;
     }
 
     .header p {
-      color: #666;
+      color: #65676b;
       font-size: 1.1em;
       font-weight: 400;
     }
@@ -50,9 +50,9 @@
     .controls {
       background: white;
       padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
     }
 
     .controls-row {
@@ -70,17 +70,17 @@
     .search-box input {
       width: 100%;
       padding: 12px 20px;
-      border: 2px solid #e0e0e0;
+      border: 1px solid #ccd0d5;
       border-radius: 8px;
       font-size: 1em;
-      font-family: 'Poppins', sans-serif;
+      font-family: inherit;
       transition: all 0.3s;
     }
 
     .search-box input:focus {
       outline: none;
-      border-color: #1a2332;
-      box-shadow: 0 0 0 3px rgba(26, 35, 50, 0.1);
+      border-color: #1877f2;
+      box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
     }
 
     .filter-group {
@@ -91,26 +91,26 @@
 
     select {
       padding: 10px 15px;
-      border: 2px solid #e0e0e0;
+      border: 1px solid #ccd0d5;
       border-radius: 8px;
       font-size: 0.95em;
-      font-family: 'Poppins', sans-serif;
+      font-family: inherit;
       background: white;
       cursor: pointer;
       transition: all 0.3s;
     }
 
     select:hover {
-      border-color: #1a2332;
+      border-color: #1877f2;
     }
 
     .btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       border: none;
       border-radius: 8px;
       font-size: 1em;
       font-weight: 600;
-      font-family: 'Poppins', sans-serif;
+      font-family: inherit;
       cursor: pointer;
       transition: all 0.3s;
       display: inline-flex;
@@ -119,172 +119,325 @@
     }
 
     .btn-primary {
-      background: #1a2332;
+      background: #1877f2;
       color: white;
     }
 
     .btn-primary:hover {
-      background: #2d3e50;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(26, 35, 50, 0.3);
+      background: #166fe5;
     }
 
     .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
+      background: #e4e6eb;
+      color: #050505;
     }
 
     .btn-secondary:hover {
-      background: #e0e0e0;
+      background: #d8dadf;
     }
 
     .stats {
-      display: flex;
-      gap: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
       margin-top: 20px;
-      flex-wrap: wrap;
     }
 
     .stat-card {
-      background: #1a2332;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 10px;
-      flex: 1;
-      min-width: 150px;
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     .stat-card h3 {
-      font-size: 2em;
-      margin-bottom: 5px;
+      font-size: 28px;
+      margin-bottom: 4px;
       font-weight: 700;
+      color: #1877f2;
     }
 
     .stat-card p {
-      opacity: 0.9;
-      font-size: 0.9em;
+      font-size: 13px;
+      color: #65676b;
       font-weight: 400;
     }
 
     .ads-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+      gap: 24px;
       margin-top: 20px;
     }
 
+    /* Facebook Ad Card Styles */
     .ad-card {
       background: white;
-      border-radius: 15px;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
       transition: all 0.3s;
       cursor: pointer;
       position: relative;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .ad-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    .ad-link-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(26, 35, 50, 0.9);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.85em;
-      font-weight: 600;
-      text-decoration: none;
-      z-index: 10;
-      transition: all 0.3s;
+    /* Ad Header (Profile section) */
+    .ad-header-section {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #e4e6eb;
     }
 
-    .ad-link-badge:hover {
-      background: rgba(26, 35, 50, 1);
-      transform: scale(1.05);
-    }
-
-    .ad-image {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-      background: #f5f5f5;
+    .ad-profile-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e4e6eb;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #999;
+      font-size: 16px;
+      font-weight: 600;
+      color: #65676b;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .ad-image img {
+    .ad-profile-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .ad-content {
-      padding: 20px;
-    }
-
-    .ad-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 15px;
+    .ad-profile-info {
+      flex: 1;
+      min-width: 0;
     }
 
     .ad-brand {
-      font-weight: 700;
-      font-size: 1.2em;
-      color: #1a2332;
+      font-size: 15px;
+      font-weight: 600;
+      color: #050505;
+      line-height: 20px;
     }
 
-    .ad-rating {
-      font-size: 1.2em;
+    .ad-sponsored {
+      font-size: 13px;
+      color: #65676b;
+      line-height: 16px;
+    }
+
+    .ad-menu {
+      font-size: 20px;
+      color: #65676b;
+      padding: 8px;
+      line-height: 1;
+    }
+
+    /* Ad Body Text */
+    .ad-body-text {
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 20px;
+      color: #050505;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .see-more {
+      color: #65676b;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline;
+    }
+
+    .see-more:hover {
+      text-decoration: underline;
+    }
+
+    /* Ad Image */
+    .ad-image {
+      width: 100%;
+      background: #f0f2f5;
+      position: relative;
+      min-height: 250px;
+    }
+
+    .ad-image img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .ad-image-placeholder {
+      padding: 60px 20px;
+      text-align: center;
+      color: #65676b;
+    }
+
+    .ad-image-placeholder-icon {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+
+    .ad-image-error {
+      padding: 60px 20px;
+      text-align: center;
+      color: #ef4444;
+    }
+
+    .ad-image-error a {
+      font-size: 12px;
+      color: #1877f2;
+    }
+
+    /* Link Preview */
+    .ad-link-preview {
+      background: #f0f2f5;
+      padding: 12px;
+      border-top: 1px solid #e4e6eb;
+    }
+
+    .ad-website-url {
+      font-size: 12px;
+      color: #65676b;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      line-height: 16px;
+      letter-spacing: 0.3px;
+    }
+
+    .ad-headline-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: space-between;
     }
 
     .ad-headline {
-      font-size: 1em;
-      color: #555;
-      margin-bottom: 12px;
-      font-weight: 500;
-      line-height: 1.4;
+      font-size: 16px;
+      font-weight: 600;
+      color: #050505;
+      line-height: 20px;
+      flex: 1;
     }
 
-    .ad-tags {
+    .ad-cta-button {
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.05);
+      color: #050505;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: default;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Engagement Bar */
+    .ad-engagement-bar {
+      padding: 4px 16px;
+      display: flex;
+      border-top: 1px solid #e4e6eb;
+    }
+
+    .ad-engagement-button {
+      flex: 1;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      color: #65676b;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: default;
+      text-align: center;
+    }
+
+    /* Meta Info Section */
+    .ad-meta-section {
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-top: 2px solid #1877f2;
+      font-size: 11px;
+      color: #65676b;
+    }
+
+    .ad-meta-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 6px;
+      margin-top: 8px;
     }
 
     .tag {
-      background: #f0f0f0;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.85em;
-      color: #666;
+      background: #e4e6eb;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #050505;
       font-weight: 500;
     }
 
     .tag.primary {
-      background: #1a2332;
+      background: #1877f2;
       color: white;
     }
 
-    .ad-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 12px;
-      border-top: 1px solid #e0e0e0;
-      font-size: 0.85em;
-      color: #999;
+    .ad-rating {
+      font-size: 18px;
+      margin-top: 8px;
     }
 
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #65676b;
+      font-size: 1.2em;
+      font-weight: 500;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .empty-state h2 {
+      color: #050505;
+      font-size: 2em;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .empty-state p {
+      color: #65676b;
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      font-weight: 400;
+    }
+
+    .error-message {
+      background: #fee;
+      border: 2px solid #fcc;
+      color: #c33;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -302,13 +455,13 @@
       background: white;
       max-width: 900px;
       margin: 40px auto;
-      border-radius: 15px;
+      border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
 
     .modal-header {
-      background: #1a2332;
+      background: #1877f2;
       color: white;
       padding: 25px 30px;
       display: flex;
@@ -357,14 +510,14 @@
     }
 
     .detail-section h3 {
-      color: #1a2332;
+      color: #050505;
       margin-bottom: 10px;
       font-size: 1.2em;
       font-weight: 700;
     }
 
     .detail-section p {
-      color: #555;
+      color: #65676b;
       line-height: 1.6;
       font-weight: 400;
     }
@@ -374,47 +527,8 @@
       max-height: 400px;
       object-fit: contain;
       background: #f5f5f5;
-      border-radius: 10px;
+      border-radius: 8px;
       margin-bottom: 20px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 50px;
-      color: white;
-      font-size: 1.2em;
-      font-weight: 500;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-
-    .empty-state h2 {
-      color: #1a2332;
-      font-size: 2em;
-      margin-bottom: 15px;
-      font-weight: 700;
-    }
-
-    .empty-state p {
-      color: #666;
-      font-size: 1.1em;
-      margin-bottom: 25px;
-      font-weight: 400;
-    }
-
-    .error-message {
-      background: #fee;
-      border: 2px solid #fcc;
-      color: #c33;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
     }
 
     @media (max-width: 768px) {
@@ -512,9 +626,9 @@
     // ============================================
     const CONFIG = {
       spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
-      apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8', // You'll add this after setup
+      apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8',
       sheetName: 'Ads Library',
-      range: 'A:T' // Columns A through T (20 columns)
+      range: 'A:T'
     };
 
     // ============================================
@@ -523,6 +637,7 @@
     let allAds = [];
     let filteredAds = [];
     let currentAdForDetail = null;
+    let imageErrors = {};
 
     // ============================================
     // INITIALISATION
@@ -530,15 +645,56 @@
     window.addEventListener('DOMContentLoaded', function() {
       console.log('🚀 Page loaded, initialising...');
       
-      // Set up search event listener
       const searchInput = document.getElementById('searchInput');
       if (searchInput) {
         searchInput.addEventListener('input', filterAds);
       }
       
-      // Load data from Google Sheets
       loadAdsFromSheet();
     });
+
+    // ============================================
+    // IMAGE URL CONVERSION
+    // ============================================
+    function convertDriveUrl(url) {
+      if (!url) return '';
+      
+      // If already a direct URL, return as-is
+      if (url.includes('drive.google.com/uc?id=')) {
+        return url;
+      }
+      
+      // Extract file ID from various Drive URL formats
+      let fileId = null;
+      
+      // Format: https://drive.google.com/file/d/FILE_ID/view
+      let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (match) {
+        fileId = match[1];
+      }
+      
+      // Format: https://drive.google.com/open?id=FILE_ID
+      if (!fileId) {
+        match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (match) {
+          fileId = match[1];
+        }
+      }
+      
+      // Format: https://drive.google.com/drive/folders/.../FILE_ID
+      if (!fileId) {
+        match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) {
+          fileId = match[1];
+        }
+      }
+      
+      if (fileId) {
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
+      }
+      
+      return url;
+    }
 
     // ============================================
     // GOOGLE SHEETS API INTEGRATION
@@ -558,7 +714,6 @@
         const data = await response.json();
         console.log('✅ Received data from Google Sheets');
         
-        // Parse the data
         parseSheetData(data.values);
         
       } catch (error) {
@@ -574,27 +729,22 @@
         return;
       }
 
-      // First row is headers
       const headers = rows[0];
       console.log('📋 Headers:', headers);
       
-      // Convert remaining rows to objects
       allAds = rows.slice(1).map((row, index) => {
         const ad = {};
         headers.forEach((header, colIndex) => {
           ad[header] = row[colIndex] || '';
         });
         return ad;
-      }).filter(ad => ad['Brand/Advertiser']); // Filter out empty rows
+      }).filter(ad => ad['Brand/Advertiser']);
       
       console.log(`✅ Parsed ${allAds.length} ads`);
       
       filteredAds = [...allAds];
       
-      // Populate dropdowns
       populateFilterDropdowns();
-      
-      // Display ads
       displayAds();
       updateStats();
       
@@ -622,66 +772,114 @@
       document.getElementById('emptyState').style.display = 'none';
       document.getElementById('adsGrid').style.display = 'grid';
 
-      filteredAds.forEach(ad => {
-        const card = createAdCard(ad);
+      filteredAds.forEach((ad, index) => {
+        const card = createAdCard(ad, index);
         grid.appendChild(card);
       });
       
       console.log(`📊 Displayed ${filteredAds.length} ads`);
     }
 
-    function createAdCard(ad) {
+    function createAdCard(ad, index) {
       const card = document.createElement('div');
       card.className = 'ad-card';
       card.onclick = function() { openDetailModal(ad); };
 
-      // Extract image URL from Drive link
-      let imageUrl = '';
-      if (ad['Creative URL']) {
-        const match = ad['Creative URL'].match(/\/d\/([a-zA-Z0-9-_]+)/);
-        if (match) {
-          imageUrl = `https://drive.google.com/uc?id=${match[1]}`;
-        }
+      const imageUrl = convertDriveUrl(ad['Creative URL']);
+      const brandName = ad['Brand/Advertiser'] || 'Unknown Brand';
+      const brandInitial = brandName.charAt(0).toUpperCase();
+
+      // Truncate body text for preview
+      const bodyText = ad['Ad Copy'] || '';
+      const bodyLength = bodyText.length;
+      const shouldCollapse = bodyLength > 125;
+      const displayBody = shouldCollapse ? bodyText.substring(0, 125) + '...' : bodyText;
+
+      let imageHtml = '';
+      if (imageUrl && !imageErrors[index]) {
+        imageHtml = `<img src="${imageUrl}" alt="Ad" loading="lazy" onerror="handleImageError(${index})">`;
+      } else if (imageUrl && imageErrors[index]) {
+        imageHtml = `
+          <div class="ad-image-error">
+            <div style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">Failed to load image</div>
+            <a href="${imageUrl}" target="_blank" onclick="event.stopPropagation()">Open link directly</a>
+          </div>
+        `;
+      } else {
+        imageHtml = `
+          <div class="ad-image-placeholder">
+            <div class="ad-image-placeholder-icon">📷</div>
+            <div style="font-size: 14px;">No image</div>
+          </div>
+        `;
       }
 
-      const imageHtml = imageUrl ? 
-        `<img src="${imageUrl}" alt="Ad" onerror="this.parentElement.innerHTML='📷 Image'">` : 
-        '📷 No Image';
-
-      // Ad Link badge (if present)
-      const adLinkBadge = ad['Ad Link'] ? 
-        `<a href="${ad['Ad Link']}" target="_blank" class="ad-link-badge" onclick="event.stopPropagation()">🔗 View Ad</a>` : 
-        '';
-
       card.innerHTML = `
-        ${adLinkBadge}
+        <!-- Header: Profile + Sponsored -->
+        <div class="ad-header-section">
+          <div class="ad-profile-image">
+            ${brandInitial}
+          </div>
+          <div class="ad-profile-info">
+            <div class="ad-brand">${brandName}</div>
+            <div class="ad-sponsored">Sponsored</div>
+          </div>
+          <div class="ad-menu">•••</div>
+        </div>
+
+        <!-- Body Copy -->
+        ${bodyText ? `
+          <div class="ad-body-text">
+            ${displayBody}${shouldCollapse ? ' <span class="see-more">See more</span>' : ''}
+          </div>
+        ` : ''}
+
+        <!-- Image -->
         <div class="ad-image">${imageHtml}</div>
-        <div class="ad-content">
-          <div class="ad-header">
-            <div class="ad-brand">${ad['Brand/Advertiser'] || 'Unknown Brand'}</div>
-            <div class="ad-rating">${ad['Rating'] || ''}</div>
+
+        <!-- Link Preview -->
+        <div class="ad-link-preview">
+          <div class="ad-website-url">${ad['Landing Page URL'] ? ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : 'example.com'}</div>
+          <div class="ad-headline-cta">
+            <div class="ad-headline">${ad['Ad Headline'] || 'No headline'}</div>
+            <button class="ad-cta-button">Learn more</button>
           </div>
-          <div class="ad-headline">${ad['Ad Headline'] || 'No headline'}</div>
-          <div class="ad-tags">
+        </div>
+
+        <!-- Engagement Bar -->
+        <div class="ad-engagement-bar">
+          <button class="ad-engagement-button">👍 Like</button>
+          <button class="ad-engagement-button">💬 Comment</button>
+          <button class="ad-engagement-button">↗️ Share</button>
+        </div>
+
+        <!-- Meta Info -->
+        <div class="ad-meta-section">
+          <div style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+            📊 Campaign: ${ad['Industry'] || 'Unknown'}
+          </div>
+          <div class="ad-meta-tags">
             <span class="tag primary">${ad['Industry'] || 'Unknown'}</span>
-            <span class="tag">${ad['Funnel Stage'] || ''}</span>
-            <span class="tag">${ad['Offer Type'] || ''}</span>
+            ${ad['Funnel Stage'] ? `<span class="tag">${ad['Funnel Stage']}</span>` : ''}
+            ${ad['Offer Type'] ? `<span class="tag">${ad['Offer Type']}</span>` : ''}
+            ${ad['Ad Type'] ? `<span class="tag">${ad['Ad Type']}</span>` : ''}
           </div>
-          <div class="ad-meta">
-            <span>${ad['Ad Type'] || 'Unknown Type'}</span>
-            <span>${ad['Date Added'] || ''}</span>
-          </div>
+          ${ad['Rating'] ? `<div class="ad-rating">${ad['Rating']}</div>` : ''}
         </div>
       `;
 
       return card;
     }
 
+    function handleImageError(index) {
+      imageErrors[index] = true;
+      displayAds(); // Re-render to show error state
+    }
+
     // ============================================
     // FILTER FUNCTIONS
     // ============================================
     function populateFilterDropdowns() {
-      // Get unique values for each filter
       const industries = [...new Set(allAds.map(ad => ad['Industry']).filter(v => v))].sort();
       const funnelStages = [...new Set(allAds.map(ad => ad['Funnel Stage']).filter(v => v))].sort();
       const offerTypes = [...new Set(allAds.map(ad => ad['Offer Type']).filter(v => v))].sort();
@@ -763,14 +961,7 @@
       currentAdForDetail = ad;
       document.getElementById('detailBrand').textContent = ad['Brand/Advertiser'];
       
-      let imageUrl = '';
-      if (ad['Creative URL']) {
-        const match = ad['Creative URL'].match(/\/d\/([a-zA-Z0-9-_]+)/);
-        if (match) {
-          imageUrl = `https://drive.google.com/uc?id=${match[1]}`;
-        }
-      }
-
+      const imageUrl = convertDriveUrl(ad['Creative URL']);
       const imageHtml = imageUrl ? `<img src="${imageUrl}" class="detail-image" alt="Ad">` : '';
       
       const adLinkSection = ad['Ad Link'] ? 
@@ -780,13 +971,13 @@
         ${imageHtml}
         <div class="detail-section">
           <h3>📊 Classification</h3>
-          <div class="ad-tags">
-            <span class="tag primary">${ad['Industry'] || ''}</span>
-            <span class="tag">${ad['Ad Type'] || ''}</span>
-            <span class="tag">${ad['Funnel Stage'] || ''}</span>
-            <span class="tag">${ad['Offer Type'] || ''}</span>
-            <span class="tag">${ad['Hook Type'] || ''}</span>
-            <span class="tag">${ad['Visual Style'] || ''}</span>
+          <div class="ad-meta-tags">
+            ${ad['Industry'] ? `<span class="tag primary">${ad['Industry']}</span>` : ''}
+            ${ad['Ad Type'] ? `<span class="tag">${ad['Ad Type']}</span>` : ''}
+            ${ad['Funnel Stage'] ? `<span class="tag">${ad['Funnel Stage']}</span>` : ''}
+            ${ad['Offer Type'] ? `<span class="tag">${ad['Offer Type']}</span>` : ''}
+            ${ad['Hook Type'] ? `<span class="tag">${ad['Hook Type']}</span>` : ''}
+            ${ad['Visual Style'] ? `<span class="tag">${ad['Visual Style']}</span>` : ''}
           </div>
           <p style="margin-top: 10px;"><strong>Rating:</strong> ${ad['Rating'] || 'Not rated'}</p>
         </div>
@@ -821,7 +1012,6 @@
       document.getElementById('detailModal').style.display = 'none';
     }
 
-    // Close modal on outside click
     window.onclick = function(event) {
       const modal = document.getElementById('detailModal');
       if (event.target === modal) {
