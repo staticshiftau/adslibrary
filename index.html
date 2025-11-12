@@ -229,6 +229,10 @@
       line-height: 20px;
     }
 
+    .ad-brand a:hover {
+      text-decoration: underline !important;
+    }
+
     .ad-sponsored {
       font-size: 13px;
       color: #65676b;
@@ -485,6 +489,15 @@
     .modal-header h2 {
       font-size: 1.8em;
       font-weight: 700;
+    }
+
+    .modal-header h2 a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .modal-header h2 a:hover {
+      text-decoration: underline;
     }
 
     .close-btn {
@@ -808,6 +821,12 @@
       const imageUrl = getImageUrl(ad);
       const brandName = ad['Brand/Advertiser'] || 'Unknown Brand';
       const brandInitial = brandName.charAt(0).toUpperCase();
+      const brandLink = ad['Brands Ad Library'] || '';
+
+      // Make brand name clickable if link exists
+      const brandHtml = brandLink 
+        ? `<a href="${brandLink}" target="_blank" style="color: #050505; text-decoration: none;" onclick="event.stopPropagation()">${brandName}</a>`
+        : brandName;
 
       // Truncate body text for preview
       const bodyText = (ad['Ad Copy'] || '').trim();
@@ -841,7 +860,7 @@
             ${brandInitial}
           </div>
           <div class="ad-profile-info">
-            <div class="ad-brand">${brandName}</div>
+            <div class="ad-brand">${brandHtml}</div>
             <div class="ad-sponsored">Sponsored</div>
           </div>
           <div class="ad-menu">•••</div>
@@ -1012,7 +1031,13 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
     // ============================================
     function openDetailModal(ad) {
       currentAdForDetail = ad;
-      document.getElementById('detailBrand').textContent = ad['Brand/Advertiser'];
+      
+      const brandLink = ad['Brands Ad Library'] || '';
+      const brandHtml = brandLink 
+        ? `<a href="${brandLink}" target="_blank" style="color: white; text-decoration: none;">${ad['Brand/Advertiser']}</a>`
+        : ad['Brand/Advertiser'];
+      
+      document.getElementById('detailBrand').innerHTML = brandHtml;
       
       const imageUrl = getImageUrl(ad);
       const imageHtml = imageUrl ? `<img src="${imageUrl}" class="detail-image" alt="Ad">` : '';
