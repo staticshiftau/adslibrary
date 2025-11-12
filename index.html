@@ -341,9 +341,15 @@
       border-radius: 4px;
       font-size: 15px;
       font-weight: 600;
-      cursor: default;
+      cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .ad-cta-button:hover {
+      background: rgba(0, 0, 0, 0.1);
     }
 
     /* Engagement Bar */
@@ -853,6 +859,11 @@
         `;
       }
 
+      // CTA Button - clickable if landing page exists
+      const ctaHtml = ad['Landing Page URL'] 
+        ? `<a href="${ad['Landing Page URL']}" target="_blank" onclick="event.stopPropagation()" class="ad-cta-button">Learn more</a>`
+        : `<button class="ad-cta-button" style="cursor: default;">Learn more</button>`;
+
       card.innerHTML = `
         <!-- Header: Profile + Sponsored -->
         <div class="ad-header-section">
@@ -874,7 +885,7 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
           <div class="ad-website-url">${ad['Landing Page URL'] ? ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : 'example.com'}</div>
           <div class="ad-headline-cta">
             <div class="ad-headline">${ad['Ad Headline'] || 'No headline'}</div>
-            <button class="ad-cta-button">Learn more</button>
+            ${ctaHtml}
           </div>
         </div>
 
@@ -887,6 +898,7 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
 
         <!-- Meta Info -->
         <div class="ad-meta-section">
+          ${ad['Started Running On'] ? `<div style="font-size: 12px; color: #65676b; margin-bottom: 8px;">📅 Started: ${ad['Started Running On']}</div>` : ''}
           <div style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
             📊 Campaign: ${ad['Industry'] || 'Unknown'}
           </div>
@@ -896,7 +908,6 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
             ${ad['Offer Type'] ? `<span class="tag">${ad['Offer Type']}</span>` : ''}
             ${ad['Ad Type'] ? `<span class="tag">${ad['Ad Type']}</span>` : ''}
           </div>
-          ${ad['Rating'] ? `<div class="ad-rating">${ad['Rating']}</div>` : ''}
         </div>
         
         <!-- About This Ad Link -->
