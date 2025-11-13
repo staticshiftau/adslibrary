@@ -1,1585 +1,2834 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📚 Ads Library - Your Facebook Ads Swipe File</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .header {
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      color: #050505;
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      font-weight: 700;
-    }
-
-    .header p {
-      color: #65676b;
-      font-size: 1.1em;
-      font-weight: 400;
-    }
-
-    .controls {
-      background: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-      margin-bottom: 20px;
-    }
-
-    .controls-row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .search-box {
-      flex: 1;
-      min-width: 300px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 12px 20px;
-      border: 1px solid #ccd0d5;
-      border-radius: 8px;
-      font-size: 1em;
-      font-family: inherit;
-      transition: all 0.3s;
-    }
-
-    .search-box input:focus {
-      outline: none;
-      border-color: #1877f2;
-      box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
-    }
-
-    .filter-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    select {
-      padding: 10px 15px;
-      border: 1px solid #ccd0d5;
-      border-radius: 8px;
-      font-size: 0.95em;
-      font-family: inherit;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    select:hover {
-      border-color: #1877f2;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1em;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: #1877f2;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #166fe5;
-    }
-
-    .btn-secondary {
-      background: #e4e6eb;
-      color: #050505;
-    }
-
-    .btn-secondary:hover {
-      background: #d8dadf;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 16px;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .stat-card h3 {
-      font-size: 28px;
-      margin-bottom: 4px;
-      font-weight: 700;
-      color: #1877f2;
-    }
-
-    .stat-card p {
-      font-size: 13px;
-      color: #65676b;
-      font-weight: 400;
-    }
-
-    /* Tags Filter */
-    .tags-filter {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #e4e6eb;
-    }
-
-    .tags-filter-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #050505;
-      margin-bottom: 10px;
-    }
-
-    .tags-filter-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .tag-filter-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: #f0f2f5;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .tag-filter-checkbox:hover {
-      background: #e4e6eb;
-    }
-
-    .tag-filter-checkbox input[type="checkbox"] {
-      cursor: pointer;
-    }
-
-    .tag-filter-checkbox.active {
-      background: #e7f3ff;
-      border: 1px solid #1877f2;
-    }
-
-    .ads-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-      gap: 24px;
-      margin-top: 20px;
-    }
-
-    /* Facebook Ad Card Styles */
-    .ad-card {
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-      transition: all 0.3s;
-      cursor: pointer;
-      position: relative;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .ad-card:hover {
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* Ad Header (Profile section) */
-    .ad-header-section {
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ad-profile-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #e4e6eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 600;
-      color: #65676b;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .ad-profile-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .ad-profile-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ad-brand {
-      font-size: 15px;
-      font-weight: 600;
-      color: #050505;
-      line-height: 20px;
-    }
-
-    .ad-brand a:hover {
-      text-decoration: underline !important;
-    }
-
-    .ad-sponsored {
-      font-size: 13px;
-      color: #65676b;
-      line-height: 16px;
-    }
-
-    .ad-menu {
-      font-size: 20px;
-      color: #65676b;
-      padding: 8px;
-      line-height: 1;
-    }
-
-    /* Ad Body Text */
-    .ad-body-text {
-      padding: 0 16px 12px 16px;
-      font-size: 15px;
-      line-height: 20px;
-      color: #050505;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .see-more {
-      color: #65676b;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline;
-    }
-
-    .see-more:hover {
-      text-decoration: underline;
-    }
-
-    /* Ad Image */
-    .ad-image {
-      width: 100%;
-      background: #f0f2f5;
-      position: relative;
-    }
-
-    .ad-image img {
-      width: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .ad-image-placeholder {
-      padding: 60px 20px;
-      text-align: center;
-      color: #65676b;
-    }
-
-    .ad-image-placeholder-icon {
-      font-size: 48px;
-      margin-bottom: 8px;
-    }
-
-    .ad-image-error {
-      padding: 60px 20px;
-      text-align: center;
-      color: #ef4444;
-    }
-
-    .ad-image-error a {
-      font-size: 12px;
-      color: #1877f2;
-    }
-
-    /* Link Preview */
-    .ad-link-preview {
-      background: #f0f2f5;
-      padding: 12px;
-      border-top: 1px solid #e4e6eb;
-    }
-
-    .ad-website-url {
-      font-size: 12px;
-      color: #65676b;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-      line-height: 16px;
-      letter-spacing: 0.3px;
-    }
-
-    .ad-headline-cta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: space-between;
-    }
-
-    .ad-headline {
-      font-size: 16px;
-      font-weight: 600;
-      color: #050505;
-      line-height: 20px;
-      flex: 1;
-    }
-
-    .ad-cta-button {
-      padding: 10px 20px;
-      background: rgba(0, 0, 0, 0.05);
-      color: #050505;
-      border: none;
-      border-radius: 4px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .ad-cta-button:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-    /* Engagement Bar */
-    .ad-engagement-bar {
-      padding: 4px 16px;
-      display: flex;
-      border-top: 1px solid #e4e6eb;
-    }
-
-    .ad-engagement-button {
-      flex: 1;
-      padding: 8px;
-      background: transparent;
-      border: none;
-      color: #65676b;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: default;
-      text-align: center;
-    }
-
-    /* Meta Info Section */
-    .ad-meta-section {
-      padding: 12px 16px;
-      background: #f8f9fa;
-      border-top: 2px solid #1877f2;
-      font-size: 11px;
-      color: #65676b;
-    }
-
-    .ad-meta-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    .tag {
-      background: #e4e6eb;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      color: #050505;
-      font-weight: 500;
-    }
-
-    .tag.primary {
-      background: #1877f2;
-      color: white;
-    }
-
-    /* Interface Tags Section */
-    .ad-interface-tags {
-      padding: 12px 16px;
-      background: #fff;
-      border-top: 1px solid #e4e6eb;
-    }
-
-    .ad-interface-tags-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #65676b;
-      margin-bottom: 8px;
-    }
-
-    .ad-interface-tags-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .interface-tag {
-      background: #e7f3ff;
-      color: #1877f2;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .edit-tags-btn {
-      font-size: 13px;
-      color: #1877f2;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      padding: 0;
-      text-decoration: none;
-    }
-
-    .edit-tags-btn:hover {
-      text-decoration: underline;
-    }
-
-    .about-ad-link {
-      padding: 8px 16px;
-      background: #f0f2f5;
-      border-top: 1px solid #e4e6eb;
-      text-align: center;
-      font-size: 13px;
-      color: #65676b;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .about-ad-link:hover {
-      background: #e4e6eb;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 50px;
-      color: white;
-      font-size: 1.2em;
-      font-weight: 500;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-
-    .empty-state h2 {
-      color: #050505;
-      font-size: 2em;
-      margin-bottom: 15px;
-      font-weight: 700;
-    }
-
-    .empty-state p {
-      color: #65676b;
-      font-size: 1.1em;
-      margin-bottom: 25px;
-      font-weight: 400;
-    }
-
-    .error-message {
-      background: #fee;
-      border: 2px solid #fcc;
-      color: #c33;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-    }
-
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background: white;
-      max-width: 900px;
-      margin: 40px auto;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
-      color: white;
-      padding: 25px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-header h2 {
-      font-size: 1.8em;
-      font-weight: 700;
-    }
-
-    .modal-header h2 a {
-      color: white;
-      text-decoration: none;
-    }
-
-    .modal-header h2 a:hover {
-      text-decoration: underline;
-    }
-
-    .close-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 1.5em;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .close-btn:hover {
-      background: rgba(255,255,255,0.3);
-      transform: rotate(90deg);
-    }
-
-    .modal-body {
-      padding: 30px;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-
-    .modal-footer {
-      padding: 20px 30px;
-      background: #f9f9f9;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .detail-section {
-      margin-bottom: 25px;
-    }
-
-    .detail-section h3 {
-      color: #050505;
-      margin-bottom: 10px;
-      font-size: 1.2em;
-      font-weight: 700;
-    }
-
-    .detail-section p {
-      color: #65676b;
-      line-height: 1.6;
-      font-weight: 400;
-    }
-
-    .detail-image {
-      width: 100%;
-      max-height: 400px;
-      object-fit: contain;
-      background: #f5f5f5;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    /* Edit Tags Modal */
-    .tag-input-container {
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .tag-input {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #e4e6eb;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .tag-input:focus {
-      outline: none;
-      border-color: #1877f2;
-    }
-
-    .tag-suggestions {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border: 1px solid #e4e6eb;
-      border-radius: 8px;
-      margin-top: 4px;
-      max-height: 200px;
-      overflow-y: auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 1001;
-      display: none;
-    }
-
-    .tag-suggestion-item {
-      padding: 10px 12px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .tag-suggestion-item:hover {
-      background: #f0f2f5;
-    }
-
-    .current-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-
-    .current-tag {
-      background: #e7f3ff;
-      color: #1877f2;
-      padding: 6px 12px;
-      border-radius: 16px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .remove-tag {
-      cursor: pointer;
-      font-weight: bold;
-      color: #1877f2;
-    }
-
-    .remove-tag:hover {
-      color: #166fe5;
-    }
-
-    @media (max-width: 768px) {
-      .ads-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .header h1 {
-        font-size: 1.8em;
-      }
-    }
-  </style>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Facebook Ads Library - Professional Swipe File</title>
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+ 
+
+        body {
+
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+            background: #f5f7fa;
+
+            min-height: 100vh;
+
+        }
+
+ 
+
+        /* Global Search Bar */
+
+        .global-search {
+
+            background: white;
+
+            padding: 20px 24px;
+
+            border-bottom: 1px solid #e2e8f0;
+
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+        }
+
+ 
+
+        .global-search-wrapper {
+
+            max-width: 1600px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 16px;
+
+        }
+
+ 
+
+        .search-icon {
+
+            font-size: 20px;
+
+            color: #64748b;
+
+        }
+
+ 
+
+        .global-search-input {
+
+            flex: 1;
+
+            padding: 14px 20px;
+
+            border: 2px solid #e2e8f0;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            transition: all 0.2s;
+
+        }
+
+ 
+
+        .global-search-input:focus {
+
+            outline: none;
+
+            border-color: #667eea;
+
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        }
+
+ 
+
+        /* Main Container */
+
+        .main-container {
+
+            display: flex;
+
+            max-width: 1600px;
+
+            margin: 0 auto;
+
+            min-height: calc(100vh - 80px);
+
+        }
+
+ 
+
+        /* Filter Sidebar */
+
+        .filter-sidebar {
+
+            width: 320px;
+
+            background: white;
+
+            border-right: 1px solid #e2e8f0;
+
+            padding: 24px;
+
+            overflow-y: auto;
+
+            position: sticky;
+
+            top: 0;
+
+            height: calc(100vh - 80px);
+
+        }
+
+ 
+
+        .sidebar-header {
+
+            margin-bottom: 24px;
+
+        }
+
+ 
+
+        .sidebar-title {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: #1e293b;
+
+            margin-bottom: 8px;
+
+        }
+
+ 
+
+        .sidebar-subtitle {
+
+            font-size: 13px;
+
+            color: #64748b;
+
+        }
+
+ 
+
+        .filter-section {
+
+            margin-bottom: 24px;
+
+        }
+
+ 
+
+        .filter-label {
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #475569;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 12px;
+
+            display: block;
+
+        }
+
+ 
+
+        .filter-dropdown {
+
+            width: 100%;
+
+            padding: 10px 14px;
+
+            border: 2px solid #e2e8f0;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            color: #1e293b;
+
+            background: white;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+        }
+
+ 
+
+        .filter-dropdown:hover {
+
+            border-color: #cbd5e1;
+
+        }
+
+ 
+
+        .filter-dropdown:focus {
+
+            outline: none;
+
+            border-color: #667eea;
+
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        }
+
+ 
+
+        .rating-filter {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 10px 14px;
+
+            border: 2px solid #e2e8f0;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+            user-select: none;
+
+        }
+
+ 
+
+        .rating-filter:hover {
+
+            border-color: #cbd5e1;
+
+        }
+
+ 
+
+        .rating-filter.active {
+
+            border-color: #667eea;
+
+            background: #f0f4ff;
+
+        }
+
+ 
+
+        .rating-filter input[type="checkbox"] {
+
+            width: 18px;
+
+            height: 18px;
+
+            cursor: pointer;
+
+        }
+
+ 
+
+        .rating-filter label {
+
+            flex: 1;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            color: #1e293b;
+
+            font-weight: 500;
+
+        }
+
+ 
+
+        .clear-filters-btn {
+
+            width: 100%;
+
+            padding: 12px;
+
+            background: #ef4444;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+            margin-top: 24px;
+
+        }
+
+ 
+
+        .clear-filters-btn:hover {
+
+            background: #dc2626;
+
+            transform: translateY(-1px);
+
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+
+        }
+
+ 
+
+        .clear-filters-btn:active {
+
+            transform: translateY(0);
+
+        }
+
+ 
+
+        /* Tag Section in Sidebar */
+
+        .tag-search-input {
+
+            width: 100%;
+
+            padding: 10px 14px;
+
+            border: 2px solid #e2e8f0;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            margin-bottom: 12px;
+
+            transition: all 0.2s;
+
+        }
+
+ 
+
+        .tag-search-input:focus {
+
+            outline: none;
+
+            border-color: #667eea;
+
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        }
+
+ 
+
+        .sidebar-tags {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-top: 12px;
+
+        }
+
+ 
+
+        .sidebar-tag-pill {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 6px 12px;
+
+            background: #e0e7ff;
+
+            color: #4338ca;
+
+            border-radius: 16px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+        }
+
+ 
+
+        .sidebar-tag-pill:hover {
+
+            background: #c7d2fe;
+
+        }
+
+ 
+
+        .sidebar-tag-pill.selected {
+
+            background: #4338ca;
+
+            color: white;
+
+        }
+
+ 
+
+        /* Ad Results Area */
+
+        .ad-results-area {
+
+            flex: 1;
+
+            padding: 24px;
+
+            overflow-y: auto;
+
+        }
+
+ 
+
+        .results-header {
+
+            margin-bottom: 24px;
+
+        }
+
+ 
+
+        .results-stats {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 16px;
+
+            flex-wrap: wrap;
+
+            gap: 16px;
+
+        }
+
+ 
+
+        .stats-left {
+
+            display: flex;
+
+            gap: 24px;
+
+            align-items: center;
+
+        }
+
+ 
+
+        .stat-item {
+
+            font-size: 14px;
+
+            color: #64748b;
+
+        }
+
+ 
+
+        .stat-item strong {
+
+            color: #1e293b;
+
+            font-weight: 700;
+
+        }
+
+ 
+
+        .sort-dropdown {
+
+            padding: 10px 16px;
+
+            border: 2px solid #e2e8f0;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            background: white;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+        }
+
+ 
+
+        .sort-dropdown:hover {
+
+            border-color: #cbd5e1;
+
+        }
+
+ 
+
+        .sort-dropdown:focus {
+
+            outline: none;
+
+            border-color: #667eea;
+
+        }
+
+ 
+
+        /* Active Filter Pills */
+
+        .active-filters {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-bottom: 20px;
+
+        }
+
+ 
+
+        .active-filter-pill {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 8px 14px;
+
+            background: #667eea;
+
+            color: white;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            animation: slideIn 0.2s ease-out;
+
+        }
+
+ 
+
+        .remove-filter {
+
+            background: none;
+
+            border: none;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+            width: 20px;
+
+            height: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            transition: background 0.2s;
+
+        }
+
+ 
+
+        .remove-filter:hover {
+
+            background: rgba(255,255,255,0.2);
+
+        }
+
+ 
+
+        @keyframes slideIn {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(-10px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+
+            }
+
+        }
+
+ 
+
+        /* Ad Grid */
+
+        .ads-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+
+            gap: 24px;
+
+        }
+
+ 
+
+        .ad-card {
+
+            background: white;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+            transition: all 0.3s;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+ 
+
+        .ad-card:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+
+        }
+
+ 
+
+        .ad-image {
+
+            width: 100%;
+
+            aspect-ratio: 1.91/1;
+
+            object-fit: cover;
+
+            background: #f0f2f5;
+
+        }
+
+ 
+
+        .ad-content {
+
+            padding: 20px;
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+ 
+
+        .ad-brand {
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #667eea;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 4px;
+
+        }
+
+ 
+
+        .ad-brand a {
+
+            color: #667eea;
+
+            text-decoration: none;
+
+            transition: color 0.2s;
+
+        }
+
+ 
+
+        .ad-brand a:hover {
+
+            color: #764ba2;
+
+            text-decoration: underline;
+
+        }
+
+ 
+
+        .ad-meta {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 12px;
+
+            font-size: 11px;
+
+            color: #94a3b8;
+
+        }
+
+ 
+
+        .ad-rating {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+        }
+
+ 
+
+        .star {
+
+            color: #fbbf24;
+
+            font-size: 14px;
+
+        }
+
+ 
+
+        .star.empty {
+
+            color: #e2e8f0;
+
+        }
+
+ 
+
+        .ad-industry {
+
+            display: inline-block;
+
+            padding: 4px 12px;
+
+            background: #f1f5f9;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            color: #64748b;
+
+            margin-bottom: 12px;
+
+            font-weight: 500;
+
+        }
+
+ 
+
+        .ad-headline {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: #1e293b;
+
+            margin-bottom: 12px;
+
+            line-height: 1.4;
+
+        }
+
+ 
+
+        .ad-copy {
+
+            font-size: 14px;
+
+            color: #475569;
+
+            line-height: 1.6;
+
+            margin-bottom: 16px;
+
+            flex: 1;
+
+        }
+
+ 
+
+        .ad-cta {
+
+            display: inline-block;
+
+            padding: 10px 24px;
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: 600;
+
+            font-size: 14px;
+
+            transition: transform 0.2s, box-shadow 0.2s;
+
+            text-align: center;
+
+        }
+
+ 
+
+        .ad-cta:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+        }
+
+ 
+
+        .ad-tags-section {
+
+            margin-top: 16px;
+
+            padding-top: 16px;
+
+            border-top: 1px solid #e2e8f0;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+ 
+
+        .ad-tags-list {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 6px;
+
+            flex: 1;
+
+        }
+
+ 
+
+        .tag-chip {
+
+            display: inline-block;
+
+            padding: 4px 10px;
+
+            background: #e0e7ff;
+
+            color: #4338ca;
+
+            border-radius: 12px;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+        }
+
+ 
+
+        .add-tag-btn {
+
+            padding: 6px 16px;
+
+            background: #667eea;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.2s;
+
+            white-space: nowrap;
+
+            flex-shrink: 0;
+
+        }
+
+ 
+
+        .add-tag-btn:hover {
+
+            background: #5568d3;
+
+            transform: scale(1.05);
+
+        }
+
+ 
+
+        /* Modal */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            background: rgba(0,0,0,0.6);
+
+            z-index: 1000;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+ 
+
+        .modal.active {
+
+            display: flex;
+
+        }
+
+ 
+
+        .modal-content {
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 32px;
+
+            max-width: 500px;
+
+            width: 90%;
+
+            max-height: 80vh;
+
+            overflow-y: auto;
+
+        }
+
+ 
+
+        .modal-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 24px;
+
+        }
+
+ 
+
+        .modal-title {
+
+            font-size: 24px;
+
+            font-weight: 700;
+
+            color: #1e293b;
+
+        }
+
+ 
+
+        .modal-close {
+
+            background: none;
+
+            border: none;
+
+            font-size: 28px;
+
+            color: #94a3b8;
+
+            cursor: pointer;
+
+            padding: 0;
+
+            width: 32px;
+
+            height: 32px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition: color 0.2s;
+
+        }
+
+ 
+
+        .modal-close:hover {
+
+            color: #1e293b;
+
+        }
+
+ 
+
+        .tag-input-wrapper {
+
+            position: relative;
+
+            margin-bottom: 24px;
+
+        }
+
+ 
+
+        .tag-input {
+
+            width: 100%;
+
+            padding: 12px 16px;
+
+            border: 2px solid #e2e8f0;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            transition: all 0.2s;
+
+        }
+
+ 
+
+        .tag-input:focus {
+
+            outline: none;
+
+            border-color: #667eea;
+
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        }
+
+ 
+
+        .tag-suggestions {
+
+            position: absolute;
+
+            top: 100%;
+
+            left: 0;
+
+            right: 0;
+
+            background: white;
+
+            border: 2px solid #e2e8f0;
+
+            border-top: none;
+
+            border-radius: 0 0 8px 8px;
+
+            max-height: 200px;
+
+            overflow-y: auto;
+
+            z-index: 10;
+
+            display: none;
+
+        }
+
+ 
+
+        .tag-suggestions.active {
+
+            display: block;
+
+        }
+
+ 
+
+        .tag-suggestion-item {
+
+            padding: 10px 16px;
+
+            cursor: pointer;
+
+            transition: background 0.2s;
+
+            font-size: 14px;
+
+        }
+
+ 
+
+        .tag-suggestion-item:hover {
+
+            background: #f1f5f9;
+
+        }
+
+ 
+
+        .current-tags {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-bottom: 24px;
+
+            min-height: 40px;
+
+        }
+
+ 
+
+        .current-tag-chip {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 6px 12px;
+
+            background: #e0e7ff;
+
+            color: #4338ca;
+
+            border-radius: 16px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+        }
+
+ 
+
+        .remove-tag {
+
+            background: none;
+
+            border: none;
+
+            color: #4338ca;
+
+            cursor: pointer;
+
+            padding: 0;
+
+            width: 16px;
+
+            height: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 16px;
+
+            transition: color 0.2s;
+
+        }
+
+ 
+
+        .remove-tag:hover {
+
+            color: #3730a3;
+
+        }
+
+ 
+
+        .save-tags-btn {
+
+            width: 100%;
+
+            padding: 14px;
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            color: white;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: transform 0.2s, box-shadow 0.2s;
+
+        }
+
+ 
+
+        .save-tags-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+        }
+
+ 
+
+        .save-tags-btn:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+ 
+
+        .loading {
+
+            text-align: center;
+
+            padding: 60px 20px;
+
+            color: #64748b;
+
+        }
+
+ 
+
+        .spinner {
+
+            border: 4px solid #e2e8f0;
+
+            border-top: 4px solid #667eea;
+
+            border-radius: 50%;
+
+            width: 50px;
+
+            height: 50px;
+
+            animation: spin 1s linear infinite;
+
+            margin: 0 auto 20px;
+
+        }
+
+ 
+
+        @keyframes spin {
+
+            0% { transform: rotate(0deg); }
+
+            100% { transform: rotate(360deg); }
+
+        }
+
+ 
+
+        /* Mobile Responsive */
+
+        @media (max-width: 1024px) {
+
+            .filter-sidebar {
+
+                position: fixed;
+
+                left: -320px;
+
+                top: 0;
+
+                height: 100vh;
+
+                z-index: 999;
+
+                transition: left 0.3s ease;
+
+            }
+
+ 
+
+            .filter-sidebar.open {
+
+                left: 0;
+
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+
+            }
+
+ 
+
+            .ads-grid {
+
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+            }
+
+ 
+
+            .mobile-filter-toggle {
+
+                position: fixed;
+
+                bottom: 24px;
+
+                right: 24px;
+
+                width: 60px;
+
+                height: 60px;
+
+                background: #667eea;
+
+                color: white;
+
+                border: none;
+
+                border-radius: 50%;
+
+                font-size: 24px;
+
+                cursor: pointer;
+
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+                z-index: 998;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+            }
+
+        }
+
+ 
+
+        @media (min-width: 1025px) {
+
+            .mobile-filter-toggle {
+
+                display: none;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h1>📚 Ads Library</h1>
-      <p>Your Facebook Ads Swipe File</p>
-    </div>
 
-    <!-- Controls -->
-    <div class="controls">
-      <div class="controls-row">
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="🔍 Search ads by brand, headline, or tags...">
-        </div>
-      </div>
+    <!-- Global Search Bar -->
 
-      <div class="filter-group" style="margin-top: 15px;">
-        <select id="industryFilter" onchange="filterAds()">
-          <option value="">All Industries</option>
-        </select>
-        <select id="funnelFilter" onchange="filterAds()">
-          <option value="">All Funnel Stages</option>
-        </select>
-        <select id="offerFilter" onchange="filterAds()">
-          <option value="">All Offer Types</option>
-        </select>
-        <select id="ratingFilter" onchange="filterAds()">
-          <option value="">All Ratings</option>
-        </select>
-        <button class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button>
-      </div>
+    <div class="global-search">
 
-      <!-- Tags Filter -->
-      <div class="tags-filter">
-        <div class="tags-filter-label">🏷️ Filter by Tags:</div>
-        <div class="tags-filter-options" id="tagsFilterOptions">
-          <!-- Tags will be populated here -->
-        </div>
-      </div>
+        <div class="global-search-wrapper">
 
-      <div class="stats">
-        <div class="stat-card">
-          <h3 id="totalAds">0</h3>
-          <p>Total Ads</p>
-        </div>
-        <div class="stat-card">
-          <h3 id="fiveStarAds">0</h3>
-          <p>5-Star Ads</p>
-        </div>
-        <div class="stat-card">
-          <h3 id="filteredCount">0</h3>
-          <p>Showing</p>
-        </div>
-      </div>
-    </div>
+            <span class="search-icon">🔍</span>
 
-    <!-- Loading State -->
-    <div class="loading" id="loading">Loading ads... ⏳</div>
+            <input
 
-    <!-- Error Message -->
-    <div id="errorMessage" style="display: none;"></div>
+                type="text"
 
-    <!-- Ads Grid -->
-    <div class="ads-grid" id="adsGrid" style="display: none;"></div>
+                id="globalSearch"
 
-    <!-- Empty State -->
-    <div class="empty-state" id="emptyState" style="display: none;">
-      <h2>No ads found</h2>
-      <p>Try adjusting your filters or search query.</p>
-    </div>
-  </div>
+                class="global-search-input"
 
-  <!-- Detail Modal -->
-  <div class="modal" id="detailModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="detailBrand"></h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body" id="detailContent"></div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
-      </div>
-    </div>
-  </div>
+                placeholder="Search ads by headline, copy, or advertiser name..."
 
-  <!-- Edit Tags Modal -->
-  <div class="modal" id="editTagsModal">
-    <div class="modal-content" style="max-width: 500px;">
-      <div class="modal-header">
-        <h2>Edit Tags</h2>
-        <button class="close-btn" onclick="closeEditTagsModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="detail-section">
-          <h3 id="editTagsBrand"></h3>
-          <p style="color: #65676b; font-size: 13px; margin-bottom: 15px;">Type to add or select existing tags</p>
-          
-          <div class="current-tags" id="currentTagsContainer">
-            <!-- Current tags will appear here -->
-          </div>
-
-          <div class="tag-input-container">
-            <input 
-              type="text" 
-              id="tagInput" 
-              class="tag-input" 
-              placeholder="Type tag name (e.g., Eddie, HRAO, Stirling...)"
-              autocomplete="off"
             >
-            <div class="tag-suggestions" id="tagSuggestions"></div>
-          </div>
 
-          <p style="color: #999; font-size: 12px;">Press Enter to add a new tag or click a suggestion</p>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeEditTagsModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveTagsToSheet()" id="saveTagsBtn">Save Tags</button>
-      </div>
+
     </div>
-  </div>
 
-  <script>
-    // ============================================
-    // CONFIGURATION
-    // ============================================
-    const CONFIG = {
-      spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
-      apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8',
-      sheetName: 'Ads Library',
-      range: 'A:W',
-      updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags'
-    };
+ 
 
-    // ============================================
-    // GLOBAL STATE
-    // ============================================
-    let allAds = [];
-    let filteredAds = [];
-    let currentAdForDetail = null;
-    let currentAdForTagEdit = null;
-    let imageErrors = {};
-    let selectedTagFilters = new Set();
-    let allUniqueTags = new Set();
+    <!-- Main Container -->
 
-    // ============================================
-    // INITIALISATION
-    // ============================================
-    window.addEventListener('DOMContentLoaded', function() {
-      console.log('🚀 Page loaded, initialising...');
-      
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.addEventListener('input', filterAds);
-      }
+    <div class="main-container">
 
-      // Tag input autocomplete
-      const tagInput = document.getElementById('tagInput');
-      if (tagInput) {
-        tagInput.addEventListener('input', handleTagInputChange);
-        tagInput.addEventListener('keydown', handleTagInputKeydown);
-      }
-      
-      loadAdsFromSheet();
-    });
+        <!-- Filter Sidebar -->
 
-    // ============================================
-    // IMAGE URL CONVERSION
-    // ============================================
-    function getImageUrl(ad) {
-      if (ad['Image Preview'] && ad['Image Preview'].trim()) {
-        return ad['Image Preview'];
-      }
-      
-      const creativeUrl = ad['Creative URL'];
-      if (!creativeUrl) return '';
-      
-      if (creativeUrl.includes('lh3.googleusercontent.com') || creativeUrl.includes('drive.google.com/uc?id=')) {
-        return creativeUrl;
-      }
-      
-      let fileId = null;
-      let match = creativeUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (match) {
-        fileId = match[1];
-      }
-      
-      if (!fileId) {
-        match = creativeUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-        if (match) {
-          fileId = match[1];
+        <aside class="filter-sidebar" id="filterSidebar">
+
+            <div class="sidebar-header">
+
+                <h2 class="sidebar-title">Filters</h2>
+
+                <p class="sidebar-subtitle">Refine your ad search</p>
+
+            </div>
+
+ 
+
+            <!-- Industry Filter -->
+
+            <div class="filter-section">
+
+                <label class="filter-label">Industry</label>
+
+                <select id="industryFilter" class="filter-dropdown">
+
+                    <option value="">All Industries</option>
+
+                </select>
+
+            </div>
+
+ 
+
+            <!-- Funnel Stage Filter -->
+
+            <div class="filter-section">
+
+                <label class="filter-label">Funnel Stage</label>
+
+                <select id="funnelStageFilter" class="filter-dropdown">
+
+                    <option value="">All Stages</option>
+
+                </select>
+
+            </div>
+
+ 
+
+            <!-- Offer Type Filter -->
+
+            <div class="filter-section">
+
+                <label class="filter-label">Offer Type</label>
+
+                <select id="offerTypeFilter" class="filter-dropdown">
+
+                    <option value="">All Offer Types</option>
+
+                </select>
+
+            </div>
+
+ 
+
+            <!-- Rating Filter -->
+
+            <div class="filter-section">
+
+                <label class="filter-label">Rating</label>
+
+                <div class="rating-filter" id="ratingFilter">
+
+                    <input type="checkbox" id="rating5plus">
+
+                    <label for="rating5plus">⭐⭐⭐⭐⭐ 5 Stars Only</label>
+
+                </div>
+
+            </div>
+
+ 
+
+            <!-- Tags Section -->
+
+            <div class="filter-section">
+
+                <label class="filter-label">Client Tags</label>
+
+                <input
+
+                    type="text"
+
+                    id="tagSearchInput"
+
+                    class="tag-search-input"
+
+                    placeholder="Search tags..."
+
+                >
+
+                <div class="sidebar-tags" id="sidebarTags"></div>
+
+            </div>
+
+ 
+
+            <!-- Clear Filters Button -->
+
+            <button class="clear-filters-btn" onclick="clearAllFilters()">
+
+                🗑️ Clear All Filters
+
+            </button>
+
+        </aside>
+
+ 
+
+        <!-- Ad Results Area -->
+
+        <main class="ad-results-area">
+
+            <div class="results-header">
+
+                <div class="results-stats">
+
+                    <div class="stats-left">
+
+                        <div class="stat-item">
+
+                            Total Ads: <strong id="totalAds">0</strong>
+
+                        </div>
+
+                        <div class="stat-item">
+
+                            Showing: <strong id="showingAds">0</strong> ads
+
+                        </div>
+
+                    </div>
+
+                    <select id="sortBy" class="sort-dropdown">
+
+                        <option value="newest">Sort by: Newest</option>
+
+                        <option value="oldest">Sort by: Oldest</option>
+
+                        <option value="rating-high">Sort by: Highest Rated</option>
+
+                        <option value="rating-low">Sort by: Lowest Rated</option>
+
+                    </select>
+
+                </div>
+
+ 
+
+                <!-- Active Filter Pills -->
+
+                <div class="active-filters" id="activeFilters"></div>
+
+            </div>
+
+ 
+
+            <!-- Ads Grid -->
+
+            <div class="ads-grid" id="adsGrid">
+
+                <div class="loading">
+
+                    <div class="spinner"></div>
+
+                    Loading ads...
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+ 
+
+    <!-- Mobile Filter Toggle -->
+
+    <button class="mobile-filter-toggle" onclick="toggleSidebar()">
+
+        ⚙️
+
+    </button>
+
+ 
+
+    <!-- Tag Edit Modal -->
+
+    <div class="modal" id="tagModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2 class="modal-title">Edit Tags</h2>
+
+                <button class="modal-close" onclick="closeTagModal()">×</button>
+
+            </div>
+
+ 
+
+            <div class="tag-input-wrapper">
+
+                <input
+
+                    type="text"
+
+                    id="tagInput"
+
+                    class="tag-input"
+
+                    placeholder="Type to add or search tags..."
+
+                    autocomplete="off"
+
+                >
+
+                <div class="tag-suggestions" id="tagSuggestions"></div>
+
+            </div>
+
+ 
+
+            <div class="current-tags" id="currentTags"></div>
+
+ 
+
+            <button class="save-tags-btn" onclick="saveTagsToSheet()">
+
+                Save Tags
+
+            </button>
+
+        </div>
+
+    </div>
+
+ 
+
+    <script>
+
+        const CONFIG = {
+
+            spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
+
+            apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8',
+
+            sheetName: 'Ads Library',
+
+            range: 'A:W',
+
+            updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags'
+
+        };
+
+ 
+
+        const PREDEFINED_TAGS = ['Eddie', 'HRAO', 'Stirling', 'Corbel', 'IGL', 'Ange', 'Static-Shift'];
+
+ 
+
+        let allAds = [];
+
+        let filteredAds = [];
+
+        let allUniqueTags = new Set(PREDEFINED_TAGS);
+
+        let selectedTagFilters = new Set();
+
+        let currentAdForTagEdit = null;
+
+        let activeFilters = {
+
+            search: '',
+
+            industry: '',
+
+            funnelStage: '',
+
+            offerType: '',
+
+            rating5plus: false,
+
+            tags: new Set()
+
+        };
+
+ 
+
+        async function fetchAds() {
+
+            try {
+
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${CONFIG.sheetName}!${CONFIG.range}?key=${CONFIG.apiKey}`;
+
+                const response = await fetch(url);
+
+                const data = await response.json();
+
+ 
+
+                if (!data.values || data.values.length < 2) {
+
+                    document.getElementById('adsGrid').innerHTML = '<div class="loading">No ads found</div>';
+
+                    return;
+
+                }
+
+ 
+
+                const headers = data.values[0];
+
+                const rows = data.values.slice(1);
+
+ 
+
+                allAds = rows.map(row => {
+
+                    const ad = {};
+
+                    headers.forEach((header, index) => {
+
+                        ad[header] = row[index] || '';
+
+                    });
+
+                    return ad;
+
+                });
+
+ 
+
+                // Extract all unique tags
+
+                allAds.forEach(ad => {
+
+                    if (ad['Interface Tags']) {
+
+                        const tags = ad['Interface Tags'].split(',').map(t => t.trim()).filter(t => t);
+
+                        tags.forEach(tag => allUniqueTags.add(tag));
+
+                    }
+
+                });
+
+ 
+
+                populateFilters();
+
+                filteredAds = [...allAds];
+
+                sortAds();
+
+                renderAds();
+
+                updateStats();
+
+            } catch (error) {
+
+                console.error('Error fetching ads:', error);
+
+                document.getElementById('adsGrid').innerHTML = '<div class="loading">❌ Error loading ads</div>';
+
+            }
+
         }
-      }
-      
-      if (!fileId) {
-        match = creativeUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if (match) {
-          fileId = match[1];
+
+ 
+
+        function populateFilters() {
+
+            // Populate Industry Filter
+
+            const industries = [...new Set(allAds.map(ad => ad['Industry']).filter(i => i))].sort();
+
+            const industrySelect = document.getElementById('industryFilter');
+
+            industries.forEach(industry => {
+
+                const option = document.createElement('option');
+
+                option.value = industry;
+
+                option.textContent = industry;
+
+                industrySelect.appendChild(option);
+
+            });
+
+ 
+
+            // Populate Funnel Stage Filter
+
+            const funnelStages = [...new Set(allAds.map(ad => ad['Funnel Stage']).filter(i => i))].sort();
+
+            const funnelSelect = document.getElementById('funnelStageFilter');
+
+            funnelStages.forEach(stage => {
+
+                const option = document.createElement('option');
+
+                option.value = stage;
+
+                option.textContent = stage;
+
+                funnelSelect.appendChild(option);
+
+            });
+
+ 
+
+            // Populate Offer Type Filter
+
+            const offerTypes = [...new Set(allAds.map(ad => ad['Offer Type']).filter(i => i))].sort();
+
+            const offerSelect = document.getElementById('offerTypeFilter');
+
+            offerTypes.forEach(type => {
+
+                const option = document.createElement('option');
+
+                option.value = type;
+
+                option.textContent = type;
+
+                offerSelect.appendChild(option);
+
+            });
+
+ 
+
+            // Populate Tags
+
+            populateSidebarTags();
+
         }
-      }
-      
-      if (fileId) {
-        return `https://drive.google.com/uc?export=view&id=${fileId}`;
-      }
-      
-      return creativeUrl;
-    }
 
-    // ============================================
-    // GOOGLE SHEETS API INTEGRATION
-    // ============================================
-    async function loadAdsFromSheet() {
-      console.log('📡 Loading ads from Google Sheets...');
-      
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${CONFIG.sheetName}!${CONFIG.range}?key=${CONFIG.apiKey}`;
-      
-      try {
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+ 
+
+        function populateSidebarTags() {
+
+            const container = document.getElementById('sidebarTags');
+
+            container.innerHTML = '';
+
+ 
+
+            const sortedTags = Array.from(allUniqueTags).sort();
+
+            sortedTags.forEach(tag => {
+
+                const pill = document.createElement('div');
+
+                pill.className = 'sidebar-tag-pill';
+
+                if (activeFilters.tags.has(tag)) {
+
+                    pill.classList.add('selected');
+
+                }
+
+                pill.textContent = tag;
+
+                pill.onclick = () => toggleTagFilter(tag);
+
+                container.appendChild(pill);
+
+            });
+
         }
-        
-        const data = await response.json();
-        console.log('✅ Received data from Google Sheets');
-        
-        parseSheetData(data.values);
-        
-      } catch (error) {
-        console.error('❌ Error loading ads:', error);
-        showError('Failed to load ads from Google Sheets. Please check your API key and sheet permissions.');
-      }
-    }
 
-    function parseSheetData(rows) {
-      if (!rows || rows.length === 0) {
-        console.warn('⚠️ No data found in sheet');
-        showEmptyState();
-        return;
-      }
+ 
 
-      const headers = rows[0];
-      console.log('📋 Headers:', headers);
-      
-      allAds = rows.slice(1).map((row, index) => {
-        const ad = {};
-        headers.forEach((header, colIndex) => {
-          ad[header] = row[colIndex] || '';
-        });
-        return ad;
-      }).filter(ad => ad['Brand/Advertiser']);
-      
-      console.log(`✅ Parsed ${allAds.length} ads`);
-      
-      // Collect all unique tags
-      allUniqueTags.clear();
-      allAds.forEach(ad => {
-        const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
-        tags.forEach(tag => allUniqueTags.add(tag));
-      });
-      
-      filteredAds = [...allAds];
-      
-      populateFilterDropdowns();
-      populateTagsFilter();
-      displayAds();
-      updateStats();
-      
-      document.getElementById('loading').style.display = 'none';
-      
-      if (allAds.length === 0) {
-        showEmptyState();
-      } else {
-        document.getElementById('adsGrid').style.display = 'grid';
-      }
-    }
+        function toggleTagFilter(tag) {
 
-    // ============================================
-    // TAGS FILTER
-    // ============================================
-    function populateTagsFilter() {
-      const container = document.getElementById('tagsFilterOptions');
-      container.innerHTML = '';
+            if (activeFilters.tags.has(tag)) {
 
-      if (allUniqueTags.size === 0) {
-        container.innerHTML = '<span style="color: #999; font-size: 13px;">No tags yet</span>';
-        return;
-      }
+                activeFilters.tags.delete(tag);
 
-      const sortedTags = Array.from(allUniqueTags).sort();
-      
-      sortedTags.forEach(tag => {
-        const label = document.createElement('label');
-        label.className = 'tag-filter-checkbox';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = tag;
-        checkbox.onchange = toggleTagFilter;
-        
-        const text = document.createElement('span');
-        text.textContent = tag;
-        text.style.fontSize = '13px';
-        
-        label.appendChild(checkbox);
-        label.appendChild(text);
-        container.appendChild(label);
-      });
-    }
-
-    function toggleTagFilter(event) {
-      const tag = event.target.value;
-      const label = event.target.closest('.tag-filter-checkbox');
-      
-      if (event.target.checked) {
-        selectedTagFilters.add(tag);
-        label.classList.add('active');
-      } else {
-        selectedTagFilters.delete(tag);
-        label.classList.remove('active');
-      }
-      
-      filterAds();
-    }
-
-    // ============================================
-    // DISPLAY FUNCTIONS
-    // ============================================
-    function displayAds() {
-      const grid = document.getElementById('adsGrid');
-      grid.innerHTML = '';
-
-      if (filteredAds.length === 0) {
-        showEmptyState();
-        return;
-      }
-
-      document.getElementById('emptyState').style.display = 'none';
-      document.getElementById('adsGrid').style.display = 'grid';
-
-      filteredAds.forEach((ad, index) => {
-        const card = createAdCard(ad, index);
-        grid.appendChild(card);
-      });
-      
-      console.log(`📊 Displayed ${filteredAds.length} ads`);
-    }
-
-    function createAdCard(ad, index) {
-      const card = document.createElement('div');
-      card.className = 'ad-card';
-      card.dataset.index = index;
-
-      const imageUrl = getImageUrl(ad);
-      const brandName = ad['Brand/Advertiser'] || 'Unknown Brand';
-      const brandInitial = brandName.charAt(0).toUpperCase();
-      const brandLink = ad['Brands Ad Library'] || '';
-
-      const brandHtml = brandLink 
-        ? `<a href="${brandLink}" target="_blank" style="color: #050505; text-decoration: none;" onclick="event.stopPropagation()">${brandName}</a>`
-        : brandName;
-
-      const bodyText = (ad['Ad Copy'] || '').trim();
-      const bodyLength = bodyText.length;
-      const shouldCollapse = bodyLength > 125;
-      const displayBody = shouldCollapse ? bodyText.substring(0, 125) + '...' : bodyText;
-
-      let imageHtml = '';
-      if (imageUrl && !imageErrors[index]) {
-        imageHtml = `<img src="${imageUrl}" alt="Ad" loading="lazy" onerror="handleImageError(${index})">`;
-      } else if (imageUrl && imageErrors[index]) {
-        imageHtml = `
-          <div class="ad-image-error">
-            <div style="font-size: 14px; font-weight: 500; margin-bottom: 8px;">Failed to load image</div>
-            <a href="${imageUrl}" target="_blank" onclick="event.stopPropagation()">Open link directly</a>
-          </div>
-        `;
-      } else {
-        imageHtml = `
-          <div class="ad-image-placeholder">
-            <div class="ad-image-placeholder-icon">📷</div>
-            <div style="font-size: 14px;">No image</div>
-          </div>
-        `;
-      }
-
-      const ctaHtml = ad['Landing Page URL'] 
-        ? `<a href="${ad['Landing Page URL']}" target="_blank" onclick="event.stopPropagation()" class="ad-cta-button">Learn more</a>`
-        : `<button class="ad-cta-button" style="cursor: default;">Learn more</button>`;
-
-      // Interface Tags
-      const interfaceTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
-      const tagsHtml = interfaceTags.length > 0 
-        ? interfaceTags.map(tag => `<span class="interface-tag">${tag}</span>`).join('')
-        : '<span style="color: #999; font-size: 12px;">No tags yet</span>';
-
-      card.innerHTML = `
-        <div class="ad-header-section">
-          <div class="ad-profile-image">${brandInitial}</div>
-          <div class="ad-profile-info">
-            <div class="ad-brand">${brandHtml}</div>
-            <div class="ad-sponsored">Sponsored</div>
-          </div>
-          <div class="ad-menu">•••</div>
-        </div>
-${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.replace(/"/g, '&quot;')}" data-expanded="false">${displayBody}${shouldCollapse ? ' <span class="see-more">See more</span>' : ''}</div>` : ''}
-        <div class="ad-image">${imageHtml}</div>
-        <div class="ad-link-preview">
-          <div class="ad-website-url">${ad['Landing Page URL'] ? ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : 'example.com'}</div>
-          <div class="ad-headline-cta">
-            <div class="ad-headline">${ad['Ad Headline'] || 'No headline'}</div>
-            ${ctaHtml}
-          </div>
-        </div>
-        <div class="ad-engagement-bar">
-          <button class="ad-engagement-button">👍 Like</button>
-          <button class="ad-engagement-button">💬 Comment</button>
-          <button class="ad-engagement-button">↗️ Share</button>
-        </div>
-        <div class="ad-meta-section">
-          ${ad['Started Running On'] ? `<div style="font-size: 12px; color: #65676b; margin-bottom: 8px;">📅 Started: ${ad['Started Running On']}</div>` : ''}
-          <div style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
-            📊 Campaign: ${ad['Industry'] || 'Unknown'}
-          </div>
-          <div class="ad-meta-tags">
-            <span class="tag primary">${ad['Industry'] || 'Unknown'}</span>
-            ${ad['Funnel Stage'] ? `<span class="tag">${ad['Funnel Stage']}</span>` : ''}
-            ${ad['Offer Type'] ? `<span class="tag">${ad['Offer Type']}</span>` : ''}
-            ${ad['Ad Type'] ? `<span class="tag">${ad['Ad Type']}</span>` : ''}
-          </div>
-        </div>
-        <div class="ad-interface-tags">
-          <div class="ad-interface-tags-label">🏷️ Tags:</div>
-          <div class="ad-interface-tags-list">${tagsHtml}</div>
-          <button class="edit-tags-btn" onclick="openEditTagsModal(event, ${index})">✏️ Edit Tags</button>
-        </div>
-        <div class="about-ad-link">About this ad</div>
-      `;
-      
-      setTimeout(() => {
-        const bodyTextEl = card.querySelector('.ad-body-text');
-        const seeMoreBtn = card.querySelector('.see-more');
-        if (seeMoreBtn && bodyTextEl) {
-          seeMoreBtn.onclick = function(e) {
-            e.stopPropagation();
-            const isExpanded = bodyTextEl.dataset.expanded === 'true';
-            const fullText = bodyTextEl.dataset.fullText;
-            
-            if (isExpanded) {
-              bodyTextEl.innerHTML = displayBody + ' <span class="see-more">See more</span>';
-              bodyTextEl.dataset.expanded = 'false';
             } else {
-              bodyTextEl.innerHTML = fullText + ' <span class="see-more">See less</span>';
-              bodyTextEl.dataset.expanded = 'true';
+
+                activeFilters.tags.add(tag);
+
             }
-            
-            const newBtn = bodyTextEl.querySelector('.see-more');
-            if (newBtn) {
-              newBtn.onclick = arguments.callee;
+
+            populateSidebarTags();
+
+            applyFilters();
+
+        }
+
+ 
+
+        function applyFilters() {
+
+            filteredAds = allAds.filter(ad => {
+
+                // Search filter
+
+                const matchesSearch = !activeFilters.search ||
+
+                    ad['Brand/Advertiser'].toLowerCase().includes(activeFilters.search) ||
+
+                    ad['Ad Headline'].toLowerCase().includes(activeFilters.search) ||
+
+                    ad['Ad Copy'].toLowerCase().includes(activeFilters.search);
+
+ 
+
+                // Industry filter
+
+                const matchesIndustry = !activeFilters.industry || ad['Industry'] === activeFilters.industry;
+
+ 
+
+                // Funnel Stage filter
+
+                const matchesFunnelStage = !activeFilters.funnelStage || ad['Funnel Stage'] === activeFilters.funnelStage;
+
+ 
+
+                // Offer Type filter
+
+                const matchesOfferType = !activeFilters.offerType || ad['Offer Type'] === activeFilters.offerType;
+
+ 
+
+                // Rating filter
+
+                const matchesRating = !activeFilters.rating5plus || parseInt(ad['Rating']) === 5;
+
+ 
+
+                // Tag filter (OR logic)
+
+                let matchesTags = true;
+
+                if (activeFilters.tags.size > 0) {
+
+                    const adTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+
+                    matchesTags = adTags.some(tag => activeFilters.tags.has(tag));
+
+                }
+
+ 
+
+                return matchesSearch && matchesIndustry && matchesFunnelStage && matchesOfferType && matchesRating && matchesTags;
+
+            });
+
+ 
+
+            sortAds();
+
+            renderAds();
+
+            updateStats();
+
+            renderActiveFilters();
+
+        }
+
+ 
+
+        function sortAds() {
+
+            const sortBy = document.getElementById('sortBy').value;
+
+ 
+
+            switch(sortBy) {
+
+                case 'newest':
+
+                    filteredAds.sort((a, b) => new Date(b['Date Added']) - new Date(a['Date Added']));
+
+                    break;
+
+                case 'oldest':
+
+                    filteredAds.sort((a, b) => new Date(a['Date Added']) - new Date(b['Date Added']));
+
+                    break;
+
+                case 'rating-high':
+
+                    filteredAds.sort((a, b) => (parseInt(b['Rating']) || 0) - (parseInt(a['Rating']) || 0));
+
+                    break;
+
+                case 'rating-low':
+
+                    filteredAds.sort((a, b) => (parseInt(a['Rating']) || 0) - (parseInt(b['Rating']) || 0));
+
+                    break;
+
             }
-          };
+
         }
-        
-        const aboutLink = card.querySelector('.about-ad-link');
-        if (aboutLink) {
-          aboutLink.onclick = function(e) {
-            e.stopPropagation();
-            openDetailModal(ad);
-          };
+
+ 
+
+        function renderActiveFilters() {
+
+            const container = document.getElementById('activeFilters');
+
+            container.innerHTML = '';
+
+ 
+
+            // Search filter
+
+            if (activeFilters.search) {
+
+                container.appendChild(createFilterPill('Search', activeFilters.search, () => {
+
+                    document.getElementById('globalSearch').value = '';
+
+                    activeFilters.search = '';
+
+                    applyFilters();
+
+                }));
+
+            }
+
+ 
+
+            // Industry filter
+
+            if (activeFilters.industry) {
+
+                container.appendChild(createFilterPill('Industry', activeFilters.industry, () => {
+
+                    document.getElementById('industryFilter').value = '';
+
+                    activeFilters.industry = '';
+
+                    applyFilters();
+
+                }));
+
+            }
+
+ 
+
+            // Funnel Stage filter
+
+            if (activeFilters.funnelStage) {
+
+                container.appendChild(createFilterPill('Funnel Stage', activeFilters.funnelStage, () => {
+
+                    document.getElementById('funnelStageFilter').value = '';
+
+                    activeFilters.funnelStage = '';
+
+                    applyFilters();
+
+                }));
+
+            }
+
+ 
+
+            // Offer Type filter
+
+            if (activeFilters.offerType) {
+
+                container.appendChild(createFilterPill('Offer Type', activeFilters.offerType, () => {
+
+                    document.getElementById('offerTypeFilter').value = '';
+
+                    activeFilters.offerType = '';
+
+                    applyFilters();
+
+                }));
+
+            }
+
+ 
+
+            // Rating filter
+
+            if (activeFilters.rating5plus) {
+
+                container.appendChild(createFilterPill('Rating', '5 Stars', () => {
+
+                    document.getElementById('rating5plus').checked = false;
+
+                    activeFilters.rating5plus = false;
+
+                    applyFilters();
+
+                }));
+
+            }
+
+ 
+
+            // Tag filters
+
+            activeFilters.tags.forEach(tag => {
+
+                container.appendChild(createFilterPill('Tag', tag, () => {
+
+                    toggleTagFilter(tag);
+
+                }));
+
+            });
+
         }
-      }, 0);
 
-      return card;
-    }
+ 
 
-    function handleImageError(index) {
-      imageErrors[index] = true;
-      displayAds();
-    }
+        function createFilterPill(label, value, onRemove) {
 
-    // ============================================
-    // EDIT TAGS FUNCTIONALITY
-    // ============================================
-    function openEditTagsModal(event, index) {
-      event.stopPropagation();
-      
-      const ad = filteredAds[index];
-      currentAdForTagEdit = ad;
-      
-      document.getElementById('editTagsBrand').textContent = ad['Brand/Advertiser'];
-      
-      const currentTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
-      renderCurrentTags(currentTags);
-      
-      document.getElementById('tagInput').value = '';
-      document.getElementById('tagSuggestions').style.display = 'none';
-      
-      document.getElementById('editTagsModal').style.display = 'block';
-    }
+            const pill = document.createElement('div');
 
-    function closeEditTagsModal() {
-      document.getElementById('editTagsModal').style.display = 'none';
-      currentAdForTagEdit = null;
-    }
+            pill.className = 'active-filter-pill';
 
-    function renderCurrentTags(tags) {
-      const container = document.getElementById('currentTagsContainer');
-      container.innerHTML = '';
-      
-      if (tags.length === 0) {
-        container.innerHTML = '<span style="color: #999; font-size: 13px;">No tags yet</span>';
-        return;
-      }
-      
-      tags.forEach(tag => {
-        const tagEl = document.createElement('div');
-        tagEl.className = 'current-tag';
-        tagEl.innerHTML = `
-          ${tag}
-          <span class="remove-tag" onclick="removeTag('${tag.replace(/'/g, "\\'")}')">×</span>
-        `;
-        container.appendChild(tagEl);
-      });
-    }
+            pill.innerHTML = `
 
-    function removeTag(tagToRemove) {
-      if (!currentAdForTagEdit) return;
-      
-      const currentTags = (currentAdForTagEdit['Interface Tags'] || '')
-        .split(',')
-        .map(t => t.trim())
-        .filter(t => t && t !== tagToRemove);
-      
-      currentAdForTagEdit['Interface Tags'] = currentTags.join(', ');
-      renderCurrentTags(currentTags);
-    }
+                <span>${label}: ${value}</span>
 
-    function handleTagInputChange(event) {
-      const input = event.target.value.toLowerCase();
-      const suggestions = document.getElementById('tagSuggestions');
-      
-      if (!input) {
-        suggestions.style.display = 'none';
-        return;
-      }
-      
-      const matchingTags = Array.from(allUniqueTags).filter(tag => 
-        tag.toLowerCase().includes(input)
-      );
-      
-      if (matchingTags.length === 0) {
-        suggestions.style.display = 'none';
-        return;
-      }
-      
-      suggestions.innerHTML = '';
-      matchingTags.forEach(tag => {
-        const item = document.createElement('div');
-        item.className = 'tag-suggestion-item';
-        item.textContent = tag;
-        item.onclick = () => selectTag(tag);
-        suggestions.appendChild(item);
-      });
-      
-      suggestions.style.display = 'block';
-    }
+                <button class="remove-filter">×</button>
 
-    function handleTagInputKeydown(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        const input = event.target.value.trim();
-        if (input) {
-          addTag(input);
+            `;
+
+            pill.querySelector('.remove-filter').onclick = onRemove;
+
+            return pill;
+
         }
-      }
-    }
 
-    function selectTag(tag) {
-      addTag(tag);
-    }
+ 
 
-    function addTag(tag) {
-      if (!currentAdForTagEdit) return;
-      
-      const currentTags = (currentAdForTagEdit['Interface Tags'] || '')
-        .split(',')
-        .map(t => t.trim())
-        .filter(t => t);
-      
-      if (currentTags.includes(tag)) {
-        alert('Tag already exists!');
-        return;
-      }
-      
-      currentTags.push(tag);
-      currentAdForTagEdit['Interface Tags'] = currentTags.join(', ');
-      
-      renderCurrentTags(currentTags);
-      
-      document.getElementById('tagInput').value = '';
-      document.getElementById('tagSuggestions').style.display = 'none';
-      
-      allUniqueTags.add(tag);
-    }
+        function clearAllFilters() {
 
-    async function saveTagsToSheet() {
-      if (!currentAdForTagEdit) return;
-      
-      const saveBtn = document.getElementById('saveTagsBtn');
-      const originalText = saveBtn.textContent;
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Saving...';
-      
-      try {
-        const response = await fetch(CONFIG.updateTagsWebhook, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            adLink: currentAdForTagEdit['Ad Link'],
-            tags: currentAdForTagEdit['Interface Tags']
-          })
+            document.getElementById('globalSearch').value = '';
+
+            document.getElementById('industryFilter').value = '';
+
+            document.getElementById('funnelStageFilter').value = '';
+
+            document.getElementById('offerTypeFilter').value = '';
+
+            document.getElementById('rating5plus').checked = false;
+
+ 
+
+            activeFilters = {
+
+                search: '',
+
+                industry: '',
+
+                funnelStage: '',
+
+                offerType: '',
+
+                rating5plus: false,
+
+                tags: new Set()
+
+            };
+
+ 
+
+            populateSidebarTags();
+
+            applyFilters();
+
+        }
+
+ 
+
+        function renderAds() {
+
+            const grid = document.getElementById('adsGrid');
+
+ 
+
+            if (filteredAds.length === 0) {
+
+                grid.innerHTML = '<div class="loading">No ads match your filters</div>';
+
+                return;
+
+            }
+
+ 
+
+            grid.innerHTML = filteredAds.map(ad => {
+
+                const imageUrl = ad['Image Preview'] || ad['Creative URL'] || '';
+
+                const brandLink = ad['Brands Ad Library'] || '#';
+
+                const landingPageUrl = ad['Landing Page URL'] || '#';
+
+                const startedRunningOn = ad['Started Running On'] || '';
+
+                const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+
+                const rating = parseInt(ad['Rating']) || 0;
+
+ 
+
+                return `
+
+                    <div class="ad-card">
+
+                        <img src="${imageUrl}" alt="${ad['Ad Headline']}" class="ad-image" loading="lazy">
+
+                        <div class="ad-content">
+
+                            <div class="ad-brand">
+
+                                ${brandLink && brandLink !== '#' ?
+
+                                    `<a href="${brandLink}" target="_blank" rel="noopener noreferrer">${ad['Brand/Advertiser']}</a>` :
+
+                                    ad['Brand/Advertiser']
+
+                                }
+
+                            </div>
+
+                            <div class="ad-meta">
+
+                                <span>${ad['Date Added']}${startedRunningOn ? ` • Started: ${startedRunningOn}` : ''}</span>
+
+                                ${rating > 0 ? `
+
+                                    <div class="ad-rating">
+
+                                        ${Array.from({length: 5}, (_, i) =>
+
+                                            `<span class="star ${i < rating ? '' : 'empty'}">★</span>`
+
+                                        ).join('')}
+
+                                    </div>
+
+                                ` : ''}
+
+                            </div>
+
+                            <span class="ad-industry">${ad['Industry']}</span>
+
+                            <div class="ad-headline">${ad['Ad Headline']}</div>
+
+                            <div class="ad-copy">${ad['Ad Copy'].substring(0, 200)}${ad['Ad Copy'].length > 200 ? '...' : ''}</div>
+
+                            ${landingPageUrl && landingPageUrl !== '#' ?
+
+                                `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-cta">${ad['CTA Button Text'] || 'Learn More'}</a>` :
+
+                                `<div class="ad-cta" style="cursor: default;">${ad['CTA Button Text'] || 'Learn More'}</div>`
+
+                            }
+
+                            <div class="ad-tags-section">
+
+                                <div class="ad-tags-list">
+
+                                    ${tags.length > 0 ?
+
+                                        tags.map(tag => `<span class="tag-chip">${tag}</span>`).join('') :
+
+                                        '<span style="color: #94a3b8; font-size: 12px;">No tags</span>'
+
+                                    }
+
+                                </div>
+
+                                <button class="add-tag-btn" onclick='openTagModal(${JSON.stringify(ad)})'>
+
+                                    Add Tag
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join('');
+
+        }
+
+ 
+
+        function updateStats() {
+
+            document.getElementById('totalAds').textContent = allAds.length;
+
+            document.getElementById('showingAds').textContent = filteredAds.length;
+
+        }
+
+ 
+
+        function openTagModal(ad) {
+
+            currentAdForTagEdit = ad;
+
+            const modal = document.getElementById('tagModal');
+
+            modal.classList.add('active');
+
+            renderCurrentTags();
+
+            document.getElementById('tagInput').value = '';
+
+        }
+
+ 
+
+        function closeTagModal() {
+
+            const modal = document.getElementById('tagModal');
+
+            modal.classList.remove('active');
+
+            currentAdForTagEdit = null;
+
+            document.getElementById('tagSuggestions').classList.remove('active');
+
+        }
+
+ 
+
+        function renderCurrentTags() {
+
+            const container = document.getElementById('currentTags');
+
+            const tags = (currentAdForTagEdit['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+
+ 
+
+            if (tags.length === 0) {
+
+                container.innerHTML = '<div style="color: #94a3b8; font-size: 14px;">No tags added yet</div>';
+
+                return;
+
+            }
+
+ 
+
+            container.innerHTML = tags.map(tag => `
+
+                <div class="current-tag-chip">
+
+                    ${tag}
+
+                    <button class="remove-tag" onclick="removeTag('${tag}')">×</button>
+
+                </div>
+
+            `).join('');
+
+        }
+
+ 
+
+        function removeTag(tagToRemove) {
+
+            const currentTags = (currentAdForTagEdit['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+
+            const updatedTags = currentTags.filter(tag => tag !== tagToRemove);
+
+            currentAdForTagEdit['Interface Tags'] = updatedTags.join(', ');
+
+            renderCurrentTags();
+
+        }
+
+ 
+
+        function handleTagInputChange(event) {
+
+            const input = event.target.value.toLowerCase();
+
+            const suggestionsDiv = document.getElementById('tagSuggestions');
+
+ 
+
+            if (!input) {
+
+                suggestionsDiv.classList.remove('active');
+
+                return;
+
+            }
+
+ 
+
+            const matchingTags = Array.from(allUniqueTags).filter(tag =>
+
+                tag.toLowerCase().includes(input)
+
+            );
+
+ 
+
+            if (matchingTags.length === 0) {
+
+                suggestionsDiv.classList.remove('active');
+
+                return;
+
+            }
+
+ 
+
+            suggestionsDiv.innerHTML = matchingTags.map(tag => `
+
+                <div class="tag-suggestion-item" onclick="addTagFromSuggestion('${tag}')">${tag}</div>
+
+            `).join('');
+
+ 
+
+            suggestionsDiv.classList.add('active');
+
+        }
+
+ 
+
+        function addTagFromSuggestion(tag) {
+
+            addTag(tag);
+
+            document.getElementById('tagInput').value = '';
+
+            document.getElementById('tagSuggestions').classList.remove('active');
+
+        }
+
+ 
+
+        function addTag(tagToAdd) {
+
+            const currentTags = (currentAdForTagEdit['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+
+ 
+
+            if (currentTags.includes(tagToAdd)) {
+
+                return;
+
+            }
+
+ 
+
+            currentTags.push(tagToAdd);
+
+            currentAdForTagEdit['Interface Tags'] = currentTags.join(', ');
+
+            allUniqueTags.add(tagToAdd);
+
+            renderCurrentTags();
+
+        }
+
+ 
+
+        async function saveTagsToSheet() {
+
+            const btn = document.querySelector('.save-tags-btn');
+
+            btn.disabled = true;
+
+            btn.textContent = 'Saving...';
+
+ 
+
+            try {
+
+                const response = await fetch(CONFIG.updateTagsWebhook, {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type': 'application/json'
+
+                    },
+
+                    body: JSON.stringify({
+
+                        adLink: currentAdForTagEdit['Ad Link'],
+
+                        tags: currentAdForTagEdit['Interface Tags']
+
+                    })
+
+                });
+
+ 
+
+                if (!response.ok) {
+
+                    throw new Error('Failed to save tags');
+
+                }
+
+ 
+
+                const adIndex = allAds.findIndex(ad => ad['Ad Link'] === currentAdForTagEdit['Ad Link']);
+
+                if (adIndex !== -1) {
+
+                    allAds[adIndex]['Interface Tags'] = currentAdForTagEdit['Interface Tags'];
+
+                }
+
+ 
+
+                populateSidebarTags();
+
+                applyFilters();
+
+ 
+
+                alert('✅ Tags saved successfully!');
+
+                closeTagModal();
+
+            } catch (error) {
+
+                console.error('Error saving tags:', error);
+
+                alert('❌ Failed to save tags: ' + error.message);
+
+            } finally {
+
+                btn.disabled = false;
+
+                btn.textContent = 'Save Tags';
+
+            }
+
+        }
+
+ 
+
+        function toggleSidebar() {
+
+            document.getElementById('filterSidebar').classList.toggle('open');
+
+        }
+
+ 
+
+        // Event Listeners
+
+        document.getElementById('globalSearch').addEventListener('input', (e) => {
+
+            activeFilters.search = e.target.value.toLowerCase();
+
+            applyFilters();
+
         });
-        
-        const data = await response.json();
-        
-        if (response.ok && data.status === 'success') {
-          alert('✅ Tags saved successfully!');
-          
-          // Update in local data
-          const adIndex = allAds.findIndex(ad => ad['Ad Link'] === currentAdForTagEdit['Ad Link']);
-          if (adIndex !== -1) {
-            allAds[adIndex]['Interface Tags'] = currentAdForTagEdit['Interface Tags'];
-          }
-          
-          // Rebuild tag filter options
-          allUniqueTags.clear();
-          allAds.forEach(ad => {
-            const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
-            tags.forEach(tag => allUniqueTags.add(tag));
-          });
-          populateTagsFilter();
-          
-          // Refresh display
-          filterAds();
-          closeEditTagsModal();
-          
-        } else {
-          throw new Error(data.message || 'Failed to save tags');
-        }
-        
-      } catch (error) {
-        console.error('Error saving tags:', error);
-        alert('❌ Failed to save tags: ' + error.message);
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = originalText;
-      }
-    }
 
-    // ============================================
-    // FILTER FUNCTIONS
-    // ============================================
-    function populateFilterDropdowns() {
-      const industries = [...new Set(allAds.map(ad => ad['Industry']).filter(v => v))].sort();
-      const funnelStages = [...new Set(allAds.map(ad => ad['Funnel Stage']).filter(v => v))].sort();
-      const offerTypes = [...new Set(allAds.map(ad => ad['Offer Type']).filter(v => v))].sort();
-      const ratings = [...new Set(allAds.map(ad => ad['Rating']).filter(v => v))].sort().reverse();
+ 
 
-      populateSelect('industryFilter', industries);
-      populateSelect('funnelFilter', funnelStages);
-      populateSelect('offerFilter', offerTypes);
-      populateSelect('ratingFilter', ratings);
-      
-      console.log('✅ Filter dropdowns populated');
-    }
+        document.getElementById('industryFilter').addEventListener('change', (e) => {
 
-    function populateSelect(id, options) {
-      const select = document.getElementById(id);
-      
-      options.forEach(option => {
-        const opt = document.createElement('option');
-        opt.value = option;
-        opt.textContent = option;
-        select.appendChild(opt);
-      });
-    }
+            activeFilters.industry = e.target.value;
 
-    function filterAds() {
-      if (!allAds || allAds.length === 0) {
-        return;
-      }
+            applyFilters();
 
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const industry = document.getElementById('industryFilter').value;
-      const funnel = document.getElementById('funnelFilter').value;
-      const offer = document.getElementById('offerFilter').value;
-      const rating = document.getElementById('ratingFilter').value;
+        });
 
-      filteredAds = allAds.filter(ad => {
-        const matchesSearch = !searchTerm || 
-          (ad['Brand/Advertiser'] || '').toLowerCase().includes(searchTerm) ||
-          (ad['Ad Headline'] || '').toLowerCase().includes(searchTerm) ||
-          (ad['Tags'] || '').toLowerCase().includes(searchTerm) ||
-          (ad['Interface Tags'] || '').toLowerCase().includes(searchTerm);
+ 
 
-        const matchesIndustry = !industry || ad['Industry'] === industry;
-        const matchesFunnel = !funnel || ad['Funnel Stage'] === funnel;
-        const matchesOffer = !offer || ad['Offer Type'] === offer;
-        const matchesRating = !rating || ad['Rating'] === rating;
+        document.getElementById('funnelStageFilter').addEventListener('change', (e) => {
 
-        // Tags filter (OR logic)
-        let matchesTags = true;
-        if (selectedTagFilters.size > 0) {
-          const adTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
-          matchesTags = adTags.some(tag => selectedTagFilters.has(tag));
-        }
+            activeFilters.funnelStage = e.target.value;
 
-        return matchesSearch && matchesIndustry && matchesFunnel && matchesOffer && matchesRating && matchesTags;
-      });
+            applyFilters();
 
-      displayAds();
-      updateStats();
-    }
+        });
 
-    function clearFilters() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('industryFilter').value = '';
-      document.getElementById('funnelFilter').value = '';
-      document.getElementById('offerFilter').value = '';
-      document.getElementById('ratingFilter').value = '';
-      
-      // Clear tag filters
-      selectedTagFilters.clear();
-      document.querySelectorAll('.tag-filter-checkbox').forEach(label => {
-        label.classList.remove('active');
-        label.querySelector('input').checked = false;
-      });
-      
-      filterAds();
-    }
+ 
 
-    // ============================================
-    // STATS FUNCTIONS
-    // ============================================
-    function updateStats() {
-      document.getElementById('totalAds').textContent = allAds.length;
-      
-      const fiveStarCount = allAds.filter(ad => ad['Rating'] === '⭐⭐⭐⭐⭐').length;
-      document.getElementById('fiveStarAds').textContent = fiveStarCount;
-      
-      document.getElementById('filteredCount').textContent = filteredAds.length;
-    }
+        document.getElementById('offerTypeFilter').addEventListener('change', (e) => {
 
-    // ============================================
-    // MODAL FUNCTIONS
-    // ============================================
-    function openDetailModal(ad) {
-      currentAdForDetail = ad;
-      
-      const brandLink = ad['Brands Ad Library'] || '';
-      const brandHtml = brandLink 
-        ? `<a href="${brandLink}" target="_blank" style="color: white; text-decoration: none;">${ad['Brand/Advertiser']}</a>`
-        : ad['Brand/Advertiser'];
-      
-      document.getElementById('detailBrand').innerHTML = brandHtml;
-      
-      const imageUrl = getImageUrl(ad);
-      const imageHtml = imageUrl ? `<img src="${imageUrl}" class="detail-image" alt="Ad">` : '';
-      
-      const adLinkSection = ad['Ad Link'] ? 
-        `<p><strong>Ad Link:</strong> <a href="${ad['Ad Link']}" target="_blank">${ad['Ad Link']}</a></p>` : '';
-      
-      const content = `
-        <div class="detail-section">
-          <h3>📊 Classification</h3>
-          <div class="ad-meta-tags">
-            ${ad['Industry'] ? `<span class="tag primary">${ad['Industry']}</span>` : ''}
-            ${ad['Ad Type'] ? `<span class="tag">${ad['Ad Type']}</span>` : ''}
-            ${ad['Funnel Stage'] ? `<span class="tag">${ad['Funnel Stage']}</span>` : ''}
-            ${ad['Offer Type'] ? `<span class="tag">${ad['Offer Type']}</span>` : ''}
-            ${ad['Hook Type'] ? `<span class="tag">${ad['Hook Type']}</span>` : ''}
-            ${ad['Visual Style'] ? `<span class="tag">${ad['Visual Style']}</span>` : ''}
-          </div>
-        </div>
-        <div class="detail-section">
-          <h3>⭐ Rating</h3>
-          <p>${ad['Rating'] || 'Not rated'}</p>
-        </div>
-        <div class="detail-section">
-          <h3>💡 Analysis</h3>
-          <p><strong>Why It Works:</strong><br>${ad['Why It Works'] || 'Not analysed yet'}</p>
-          <p style="margin-top: 10px;"><strong>What We Can Adapt:</strong><br>${ad['What We Can Adapt'] || 'Not documented yet'}</p>
-        </div>
-        <div class="detail-section">
-          <h3>🔗 Links</h3>
-          ${adLinkSection}
-          <p style="margin-top: 10px;"><strong>Landing Page:</strong> ${ad['Landing Page URL'] ? `<a href="${ad['Landing Page URL']}" target="_blank">${ad['Landing Page URL']}</a>` : 'N/A'}</p>
-          <p style="margin-top: 10px;"><strong>Creative:</strong> ${ad['Creative URL'] ? `<a href="${ad['Creative URL']}" target="_blank">View in Drive</a>` : 'N/A'}</p>
-        </div>
-        <div class="detail-section">
-          <h3>🏷️ Tags</h3>
-          <p>${ad['Tags'] || 'No tags'}</p>
-        </div>
-      `;
+            activeFilters.offerType = e.target.value;
 
-      document.getElementById('detailContent').innerHTML = content;
-      document.getElementById('detailModal').style.display = 'block';
-    }
+            applyFilters();
 
-    function closeModal() {
-      document.getElementById('detailModal').style.display = 'none';
-    }
+        });
 
-    window.onclick = function(event) {
-      const detailModal = document.getElementById('detailModal');
-      const editModal = document.getElementById('editTagsModal');
-      
-      if (event.target === detailModal) {
-        closeModal();
-      }
-      if (event.target === editModal) {
-        closeEditTagsModal();
-      }
-    };
+ 
 
-    // ============================================
-    // UTILITY FUNCTIONS
-    // ============================================
-    function showEmptyState() {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('emptyState').style.display = 'block';
-      document.getElementById('adsGrid').style.display = 'none';
-    }
+        document.getElementById('rating5plus').addEventListener('change', (e) => {
 
-    function showError(message) {
-      document.getElementById('loading').style.display = 'none';
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.className = 'error-message';
-      errorDiv.innerHTML = `
-        <h3>⚠️ Error Loading Ads</h3>
-        <p>${message}</p>
-        <p style="margin-top: 10px; font-size: 0.9em;">Check the browser console (F12) for more details.</p>
-      `;
-      errorDiv.style.display = 'block';
-    }
-  </script>
+            activeFilters.rating5plus = e.target.checked;
+
+            document.getElementById('ratingFilter').classList.toggle('active', e.target.checked);
+
+            applyFilters();
+
+        });
+
+ 
+
+        document.getElementById('sortBy').addEventListener('change', () => {
+
+            sortAds();
+
+            renderAds();
+
+        });
+
+ 
+
+        document.getElementById('tagInput').addEventListener('input', handleTagInputChange);
+
+        document.getElementById('tagInput').addEventListener('keypress', (e) => {
+
+            if (e.key === 'Enter') {
+
+                const value = e.target.value.trim();
+
+                if (value) {
+
+                    addTag(value);
+
+                    e.target.value = '';
+
+                    document.getElementById('tagSuggestions').classList.remove('active');
+
+                }
+
+            }
+
+        });
+
+ 
+
+        document.getElementById('tagSearchInput').addEventListener('input', (e) => {
+
+            const searchTerm = e.target.value.toLowerCase();
+
+            const pills = document.querySelectorAll('.sidebar-tag-pill');
+
+            pills.forEach(pill => {
+
+                const tagName = pill.textContent.toLowerCase();
+
+                pill.style.display = tagName.includes(searchTerm) ? 'inline-flex' : 'none';
+
+            });
+
+        });
+
+ 
+
+        document.getElementById('tagModal').addEventListener('click', (e) => {
+
+            if (e.target.id === 'tagModal') {
+
+                closeTagModal();
+
+            }
+
+        });
+
+ 
+
+        // Initialize
+
+        fetchAds();
+
+    </script>
+
 </body>
+
 </html>
+
