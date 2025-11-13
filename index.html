@@ -164,6 +164,50 @@
       font-weight: 400;
     }
 
+    /* Tags Filter */
+    .tags-filter {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e4e6eb;
+    }
+
+    .tags-filter-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #050505;
+      margin-bottom: 10px;
+    }
+
+    .tags-filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag-filter-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #f0f2f5;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .tag-filter-checkbox:hover {
+      background: #e4e6eb;
+    }
+
+    .tag-filter-checkbox input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    .tag-filter-checkbox.active {
+      background: #e7f3ff;
+      border: 1px solid #1877f2;
+    }
+
     .ads-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
@@ -401,9 +445,49 @@
       color: white;
     }
 
-    .ad-rating {
-      font-size: 18px;
-      margin-top: 8px;
+    /* Interface Tags Section */
+    .ad-interface-tags {
+      padding: 12px 16px;
+      background: #fff;
+      border-top: 1px solid #e4e6eb;
+    }
+
+    .ad-interface-tags-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #65676b;
+      margin-bottom: 8px;
+    }
+
+    .ad-interface-tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .interface-tag {
+      background: #e7f3ff;
+      color: #1877f2;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .edit-tags-btn {
+      font-size: 13px;
+      color: #1877f2;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0;
+      text-decoration: none;
+    }
+
+    .edit-tags-btn:hover {
+      text-decoration: underline;
     }
 
     .about-ad-link {
@@ -563,6 +647,80 @@
       margin-bottom: 20px;
     }
 
+    /* Edit Tags Modal */
+    .tag-input-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .tag-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e4e6eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .tag-input:focus {
+      outline: none;
+      border-color: #1877f2;
+    }
+
+    .tag-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e4e6eb;
+      border-radius: 8px;
+      margin-top: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1001;
+      display: none;
+    }
+
+    .tag-suggestion-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .tag-suggestion-item:hover {
+      background: #f0f2f5;
+    }
+
+    .current-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .current-tag {
+      background: #e7f3ff;
+      color: #1877f2;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .remove-tag {
+      cursor: pointer;
+      font-weight: bold;
+      color: #1877f2;
+    }
+
+    .remove-tag:hover {
+      color: #166fe5;
+    }
+
     @media (max-width: 768px) {
       .ads-grid {
         grid-template-columns: 1fr;
@@ -604,6 +762,14 @@
           <option value="">All Ratings</option>
         </select>
         <button class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button>
+      </div>
+
+      <!-- Tags Filter -->
+      <div class="tags-filter">
+        <div class="tags-filter-label">🏷️ Filter by Tags:</div>
+        <div class="tags-filter-options" id="tagsFilterOptions">
+          <!-- Tags will be populated here -->
+        </div>
       </div>
 
       <div class="stats">
@@ -652,6 +818,43 @@
     </div>
   </div>
 
+  <!-- Edit Tags Modal -->
+  <div class="modal" id="editTagsModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2>Edit Tags</h2>
+        <button class="close-btn" onclick="closeEditTagsModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-section">
+          <h3 id="editTagsBrand"></h3>
+          <p style="color: #65676b; font-size: 13px; margin-bottom: 15px;">Type to add or select existing tags</p>
+          
+          <div class="current-tags" id="currentTagsContainer">
+            <!-- Current tags will appear here -->
+          </div>
+
+          <div class="tag-input-container">
+            <input 
+              type="text" 
+              id="tagInput" 
+              class="tag-input" 
+              placeholder="Type tag name (e.g., Eddie, HRAO, Stirling...)"
+              autocomplete="off"
+            >
+            <div class="tag-suggestions" id="tagSuggestions"></div>
+          </div>
+
+          <p style="color: #999; font-size: 12px;">Press Enter to add a new tag or click a suggestion</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEditTagsModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTagsToSheet()" id="saveTagsBtn">Save Tags</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ============================================
     // CONFIGURATION
@@ -660,7 +863,8 @@
       spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
       apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8',
       sheetName: 'Ads Library',
-      range: 'A:T'
+      range: 'A:W',
+      updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags'
     };
 
     // ============================================
@@ -669,7 +873,10 @@
     let allAds = [];
     let filteredAds = [];
     let currentAdForDetail = null;
+    let currentAdForTagEdit = null;
     let imageErrors = {};
+    let selectedTagFilters = new Set();
+    let allUniqueTags = new Set();
 
     // ============================================
     // INITIALISATION
@@ -681,6 +888,13 @@
       if (searchInput) {
         searchInput.addEventListener('input', filterAds);
       }
+
+      // Tag input autocomplete
+      const tagInput = document.getElementById('tagInput');
+      if (tagInput) {
+        tagInput.addEventListener('input', handleTagInputChange);
+        tagInput.addEventListener('keydown', handleTagInputKeydown);
+      }
       
       loadAdsFromSheet();
     });
@@ -689,30 +903,23 @@
     // IMAGE URL CONVERSION
     // ============================================
     function getImageUrl(ad) {
-      // First try the image preview column if it exists
       if (ad['Image Preview'] && ad['Image Preview'].trim()) {
         return ad['Image Preview'];
       }
       
-      // Fallback to converting Creative URL
       const creativeUrl = ad['Creative URL'];
       if (!creativeUrl) return '';
       
-      // If already a direct URL, return as-is
       if (creativeUrl.includes('lh3.googleusercontent.com') || creativeUrl.includes('drive.google.com/uc?id=')) {
         return creativeUrl;
       }
       
-      // Extract file ID from various Drive URL formats
       let fileId = null;
-      
-      // Format: https://drive.google.com/file/d/FILE_ID/view
       let match = creativeUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
       if (match) {
         fileId = match[1];
       }
       
-      // Format: https://drive.google.com/open?id=FILE_ID
       if (!fileId) {
         match = creativeUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
         if (match) {
@@ -720,7 +927,6 @@
         }
       }
       
-      // Format: https://drive.google.com/drive/folders/.../FILE_ID
       if (!fileId) {
         match = creativeUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
         if (match) {
@@ -781,9 +987,17 @@
       
       console.log(`✅ Parsed ${allAds.length} ads`);
       
+      // Collect all unique tags
+      allUniqueTags.clear();
+      allAds.forEach(ad => {
+        const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+        tags.forEach(tag => allUniqueTags.add(tag));
+      });
+      
       filteredAds = [...allAds];
       
       populateFilterDropdowns();
+      populateTagsFilter();
       displayAds();
       updateStats();
       
@@ -794,6 +1008,54 @@
       } else {
         document.getElementById('adsGrid').style.display = 'grid';
       }
+    }
+
+    // ============================================
+    // TAGS FILTER
+    // ============================================
+    function populateTagsFilter() {
+      const container = document.getElementById('tagsFilterOptions');
+      container.innerHTML = '';
+
+      if (allUniqueTags.size === 0) {
+        container.innerHTML = '<span style="color: #999; font-size: 13px;">No tags yet</span>';
+        return;
+      }
+
+      const sortedTags = Array.from(allUniqueTags).sort();
+      
+      sortedTags.forEach(tag => {
+        const label = document.createElement('label');
+        label.className = 'tag-filter-checkbox';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = tag;
+        checkbox.onchange = toggleTagFilter;
+        
+        const text = document.createElement('span');
+        text.textContent = tag;
+        text.style.fontSize = '13px';
+        
+        label.appendChild(checkbox);
+        label.appendChild(text);
+        container.appendChild(label);
+      });
+    }
+
+    function toggleTagFilter(event) {
+      const tag = event.target.value;
+      const label = event.target.closest('.tag-filter-checkbox');
+      
+      if (event.target.checked) {
+        selectedTagFilters.add(tag);
+        label.classList.add('active');
+      } else {
+        selectedTagFilters.delete(tag);
+        label.classList.remove('active');
+      }
+      
+      filterAds();
     }
 
     // ============================================
@@ -829,12 +1091,10 @@
       const brandInitial = brandName.charAt(0).toUpperCase();
       const brandLink = ad['Brands Ad Library'] || '';
 
-      // Make brand name clickable if link exists
       const brandHtml = brandLink 
         ? `<a href="${brandLink}" target="_blank" style="color: #050505; text-decoration: none;" onclick="event.stopPropagation()">${brandName}</a>`
         : brandName;
 
-      // Truncate body text for preview
       const bodyText = (ad['Ad Copy'] || '').trim();
       const bodyLength = bodyText.length;
       const shouldCollapse = bodyLength > 125;
@@ -859,17 +1119,19 @@
         `;
       }
 
-      // CTA Button - clickable if landing page exists
       const ctaHtml = ad['Landing Page URL'] 
         ? `<a href="${ad['Landing Page URL']}" target="_blank" onclick="event.stopPropagation()" class="ad-cta-button">Learn more</a>`
         : `<button class="ad-cta-button" style="cursor: default;">Learn more</button>`;
 
+      // Interface Tags
+      const interfaceTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+      const tagsHtml = interfaceTags.length > 0 
+        ? interfaceTags.map(tag => `<span class="interface-tag">${tag}</span>`).join('')
+        : '<span style="color: #999; font-size: 12px;">No tags yet</span>';
+
       card.innerHTML = `
-        <!-- Header: Profile + Sponsored -->
         <div class="ad-header-section">
-          <div class="ad-profile-image">
-            ${brandInitial}
-          </div>
+          <div class="ad-profile-image">${brandInitial}</div>
           <div class="ad-profile-info">
             <div class="ad-brand">${brandHtml}</div>
             <div class="ad-sponsored">Sponsored</div>
@@ -877,10 +1139,7 @@
           <div class="ad-menu">•••</div>
         </div>
 ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.replace(/"/g, '&quot;')}" data-expanded="false">${displayBody}${shouldCollapse ? ' <span class="see-more">See more</span>' : ''}</div>` : ''}
-        <!-- Image -->
         <div class="ad-image">${imageHtml}</div>
-
-        <!-- Link Preview -->
         <div class="ad-link-preview">
           <div class="ad-website-url">${ad['Landing Page URL'] ? ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : 'example.com'}</div>
           <div class="ad-headline-cta">
@@ -888,15 +1147,11 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
             ${ctaHtml}
           </div>
         </div>
-
-        <!-- Engagement Bar -->
         <div class="ad-engagement-bar">
           <button class="ad-engagement-button">👍 Like</button>
           <button class="ad-engagement-button">💬 Comment</button>
           <button class="ad-engagement-button">↗️ Share</button>
         </div>
-
-        <!-- Meta Info -->
         <div class="ad-meta-section">
           ${ad['Started Running On'] ? `<div style="font-size: 12px; color: #65676b; margin-bottom: 8px;">📅 Started: ${ad['Started Running On']}</div>` : ''}
           <div style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
@@ -909,14 +1164,15 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
             ${ad['Ad Type'] ? `<span class="tag">${ad['Ad Type']}</span>` : ''}
           </div>
         </div>
-        
-        <!-- About This Ad Link -->
+        <div class="ad-interface-tags">
+          <div class="ad-interface-tags-label">🏷️ Tags:</div>
+          <div class="ad-interface-tags-list">${tagsHtml}</div>
+          <button class="edit-tags-btn" onclick="openEditTagsModal(event, ${index})">✏️ Edit Tags</button>
+        </div>
         <div class="about-ad-link">About this ad</div>
       `;
       
-      // Add event listeners after adding to DOM
       setTimeout(() => {
-        // Handle See more/less toggle
         const bodyTextEl = card.querySelector('.ad-body-text');
         const seeMoreBtn = card.querySelector('.see-more');
         if (seeMoreBtn && bodyTextEl) {
@@ -933,7 +1189,6 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
               bodyTextEl.dataset.expanded = 'true';
             }
             
-            // Re-attach event listener
             const newBtn = bodyTextEl.querySelector('.see-more');
             if (newBtn) {
               newBtn.onclick = arguments.callee;
@@ -941,7 +1196,6 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
           };
         }
         
-        // Handle About this ad click
         const aboutLink = card.querySelector('.about-ad-link');
         if (aboutLink) {
           aboutLink.onclick = function(e) {
@@ -956,7 +1210,188 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
 
     function handleImageError(index) {
       imageErrors[index] = true;
-      displayAds(); // Re-render to show error state
+      displayAds();
+    }
+
+    // ============================================
+    // EDIT TAGS FUNCTIONALITY
+    // ============================================
+    function openEditTagsModal(event, index) {
+      event.stopPropagation();
+      
+      const ad = filteredAds[index];
+      currentAdForTagEdit = ad;
+      
+      document.getElementById('editTagsBrand').textContent = ad['Brand/Advertiser'];
+      
+      const currentTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+      renderCurrentTags(currentTags);
+      
+      document.getElementById('tagInput').value = '';
+      document.getElementById('tagSuggestions').style.display = 'none';
+      
+      document.getElementById('editTagsModal').style.display = 'block';
+    }
+
+    function closeEditTagsModal() {
+      document.getElementById('editTagsModal').style.display = 'none';
+      currentAdForTagEdit = null;
+    }
+
+    function renderCurrentTags(tags) {
+      const container = document.getElementById('currentTagsContainer');
+      container.innerHTML = '';
+      
+      if (tags.length === 0) {
+        container.innerHTML = '<span style="color: #999; font-size: 13px;">No tags yet</span>';
+        return;
+      }
+      
+      tags.forEach(tag => {
+        const tagEl = document.createElement('div');
+        tagEl.className = 'current-tag';
+        tagEl.innerHTML = `
+          ${tag}
+          <span class="remove-tag" onclick="removeTag('${tag.replace(/'/g, "\\'")}')">×</span>
+        `;
+        container.appendChild(tagEl);
+      });
+    }
+
+    function removeTag(tagToRemove) {
+      if (!currentAdForTagEdit) return;
+      
+      const currentTags = (currentAdForTagEdit['Interface Tags'] || '')
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t && t !== tagToRemove);
+      
+      currentAdForTagEdit['Interface Tags'] = currentTags.join(', ');
+      renderCurrentTags(currentTags);
+    }
+
+    function handleTagInputChange(event) {
+      const input = event.target.value.toLowerCase();
+      const suggestions = document.getElementById('tagSuggestions');
+      
+      if (!input) {
+        suggestions.style.display = 'none';
+        return;
+      }
+      
+      const matchingTags = Array.from(allUniqueTags).filter(tag => 
+        tag.toLowerCase().includes(input)
+      );
+      
+      if (matchingTags.length === 0) {
+        suggestions.style.display = 'none';
+        return;
+      }
+      
+      suggestions.innerHTML = '';
+      matchingTags.forEach(tag => {
+        const item = document.createElement('div');
+        item.className = 'tag-suggestion-item';
+        item.textContent = tag;
+        item.onclick = () => selectTag(tag);
+        suggestions.appendChild(item);
+      });
+      
+      suggestions.style.display = 'block';
+    }
+
+    function handleTagInputKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        const input = event.target.value.trim();
+        if (input) {
+          addTag(input);
+        }
+      }
+    }
+
+    function selectTag(tag) {
+      addTag(tag);
+    }
+
+    function addTag(tag) {
+      if (!currentAdForTagEdit) return;
+      
+      const currentTags = (currentAdForTagEdit['Interface Tags'] || '')
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t);
+      
+      if (currentTags.includes(tag)) {
+        alert('Tag already exists!');
+        return;
+      }
+      
+      currentTags.push(tag);
+      currentAdForTagEdit['Interface Tags'] = currentTags.join(', ');
+      
+      renderCurrentTags(currentTags);
+      
+      document.getElementById('tagInput').value = '';
+      document.getElementById('tagSuggestions').style.display = 'none';
+      
+      allUniqueTags.add(tag);
+    }
+
+    async function saveTagsToSheet() {
+      if (!currentAdForTagEdit) return;
+      
+      const saveBtn = document.getElementById('saveTagsBtn');
+      const originalText = saveBtn.textContent;
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      
+      try {
+        const response = await fetch(CONFIG.updateTagsWebhook, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            adLink: currentAdForTagEdit['Ad Link'],
+            tags: currentAdForTagEdit['Interface Tags']
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.status === 'success') {
+          alert('✅ Tags saved successfully!');
+          
+          // Update in local data
+          const adIndex = allAds.findIndex(ad => ad['Ad Link'] === currentAdForTagEdit['Ad Link']);
+          if (adIndex !== -1) {
+            allAds[adIndex]['Interface Tags'] = currentAdForTagEdit['Interface Tags'];
+          }
+          
+          // Rebuild tag filter options
+          allUniqueTags.clear();
+          allAds.forEach(ad => {
+            const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+            tags.forEach(tag => allUniqueTags.add(tag));
+          });
+          populateTagsFilter();
+          
+          // Refresh display
+          filterAds();
+          closeEditTagsModal();
+          
+        } else {
+          throw new Error(data.message || 'Failed to save tags');
+        }
+        
+      } catch (error) {
+        console.error('Error saving tags:', error);
+        alert('❌ Failed to save tags: ' + error.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
+      }
     }
 
     // ============================================
@@ -1002,14 +1437,22 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
         const matchesSearch = !searchTerm || 
           (ad['Brand/Advertiser'] || '').toLowerCase().includes(searchTerm) ||
           (ad['Ad Headline'] || '').toLowerCase().includes(searchTerm) ||
-          (ad['Tags'] || '').toLowerCase().includes(searchTerm);
+          (ad['Tags'] || '').toLowerCase().includes(searchTerm) ||
+          (ad['Interface Tags'] || '').toLowerCase().includes(searchTerm);
 
         const matchesIndustry = !industry || ad['Industry'] === industry;
         const matchesFunnel = !funnel || ad['Funnel Stage'] === funnel;
         const matchesOffer = !offer || ad['Offer Type'] === offer;
         const matchesRating = !rating || ad['Rating'] === rating;
 
-        return matchesSearch && matchesIndustry && matchesFunnel && matchesOffer && matchesRating;
+        // Tags filter (OR logic)
+        let matchesTags = true;
+        if (selectedTagFilters.size > 0) {
+          const adTags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
+          matchesTags = adTags.some(tag => selectedTagFilters.has(tag));
+        }
+
+        return matchesSearch && matchesIndustry && matchesFunnel && matchesOffer && matchesRating && matchesTags;
       });
 
       displayAds();
@@ -1022,6 +1465,14 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
       document.getElementById('funnelFilter').value = '';
       document.getElementById('offerFilter').value = '';
       document.getElementById('ratingFilter').value = '';
+      
+      // Clear tag filters
+      selectedTagFilters.clear();
+      document.querySelectorAll('.tag-filter-checkbox').forEach(label => {
+        label.classList.remove('active');
+        label.querySelector('input').checked = false;
+      });
+      
       filterAds();
     }
 
@@ -1098,9 +1549,14 @@ ${bodyText ? `        <div class="ad-body-text" data-full-text="${bodyText.repla
     }
 
     window.onclick = function(event) {
-      const modal = document.getElementById('detailModal');
-      if (event.target === modal) {
+      const detailModal = document.getElementById('detailModal');
+      const editModal = document.getElementById('editTagsModal');
+      
+      if (event.target === detailModal) {
         closeModal();
+      }
+      if (event.target === editModal) {
+        closeEditTagsModal();
       }
     };
 
