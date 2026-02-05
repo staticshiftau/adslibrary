@@ -1534,12 +1534,12 @@
                 // Build media HTML based on type
                 let mediaHtml = '';
                 if (hasVideo && gdriveFileId) {
-                    // Google Drive video - use iframe embed
+                    // Google Drive video - use iframe embed (500px height for reel/video ad format)
                     mediaHtml = `
                         <iframe
                             src="https://drive.google.com/file/d/${gdriveFileId}/preview"
                             class="ad-video"
-                            style="width: 100%; height: 300px; border: none;"
+                            style="width: 100%; height: 500px; border: none;"
                             allow="autoplay"
                             loading="lazy"
                         ></iframe>
@@ -1598,15 +1598,14 @@
                         <!-- Ad Media (Image or Video) -->
                         <div class="ad-image-container" style="${hasVideo ? 'cursor: default;' : ''}">
                             ${isVideo ? `<span class="media-type-badge">🎬 Video</span>` : ''}
-                            ${hasTranscription ? `<span class="transcript-badge">📝 Transcript</span>` : ''}
                             ${mediaHtml}
                         </div>
 
                         <!-- Link Preview Box -->
                         <div class="ad-link-preview">
-                            ${ad['Landing Page URL'] ? `
+                            ${ad['Landing Page URL'] && ad['Landing Page URL'].includes('.') ? `
                                 <div class="ad-website-url">
-                                    ${ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split(/[/?#]/)[0]}
+                                    ${ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split(/[/?#]/)[0].toUpperCase()}
                                 </div>
                             ` : ''}
                             ${ad['Ad Headline'] ? `
