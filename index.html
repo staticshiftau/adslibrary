@@ -1501,19 +1501,11 @@
                    lowerUrl.includes('.mov?');
         }
 
-        // Helper function to convert Google Drive links to embeddable/playable format
-        function convertDriveUrl(url) {
-            if (!url) return url;
-
-            // Check if it's a Google Drive link
+        // Check if URL is a Google Drive link and extract file ID
+        function getGoogleDriveFileId(url) {
+            if (!url) return null;
             const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
-            if (driveMatch) {
-                const fileId = driveMatch[1];
-                // Use the preview/embed format which works better for video playback
-                return `https://drive.google.com/uc?export=download&id=${fileId}`;
-            }
-
-            return url;
+            return driveMatch ? driveMatch[1] : null;
         }
 
         function renderAds() {
@@ -1529,10 +1521,8 @@
                 const rawVideoUrl = ad['Video URL'] || '';
                 const imageUrl = ad['Image Preview'] || ad['Creative URL'] || '';
                 const hasVideo = rawVideoUrl && rawVideoUrl.trim();
-                // Convert Google Drive URLs to playable format
-                const videoUrl = hasVideo ? convertDriveUrl(rawVideoUrl) : '';
-                const mediaUrl = hasVideo ? videoUrl : imageUrl;
-                const isVideo = hasVideo || isVideoUrl(mediaUrl);
+                const gdriveFileId = hasVideo ? getGoogleDriveFileId(rawVideoUrl) : null;
+                const isVideo = hasVideo;
                 const brandLink = ad['Brands Ad Library'] || '#';
                 const landingPageUrl = ad['Landing Page URL'] || '#';
                 const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
@@ -1540,6 +1530,40 @@
                 const adCopy = ad['Ad Copy'] || '';
                 const shouldCollapse = adCopy.length > 125;
                 const hasTranscription = ad['Video Transcript'] && ad['Video Transcript'].trim();
+
+                // Build media HTML based on type
+                let mediaHtml = '';
+                if (hasVideo && gdriveFileId) {
+                    // Google Drive video - use iframe embed
+                    mediaHtml = `
+                        <iframe
+                            src="https://drive.google.com/file/d/${gdriveFileId}/preview"
+                            class="ad-video"
+                            style="width: 100%; height: 300px; border: none;"
+                            allow="autoplay"
+                            loading="lazy"
+                        ></iframe>
+                    `;
+                } else if (hasVideo) {
+                    // Direct video URL
+                    mediaHtml = `
+                        <video class="ad-video" preload="metadata" muted controls>
+                            <source src="${rawVideoUrl}" type="video/mp4">
+                            Your browser does not support video playback.
+                        </video>
+                    `;
+                } else if (imageUrl) {
+                    // Image
+                    mediaHtml = `<img src="${imageUrl}" alt="${ad['Ad Headline']}" class="ad-image" loading="lazy" onclick="openLightbox('${imageUrl}', false)">`;
+                } else {
+                    // No media
+                    mediaHtml = `
+                        <div style="padding: 60px 20px; text-align: center; color: #65676b;">
+                            <div style="font-size: 48px; margin-bottom: 8px;">📷</div>
+                            <div style="font-size: 14px;">No media</div>
+                        </div>
+                    `;
+                }
 
                 return `
                     <div class="ad-card">
@@ -1572,24 +1596,10 @@
                         ` : ''}
 
                         <!-- Ad Media (Image or Video) -->
-                        <div class="ad-image-container" onclick="openLightbox('${mediaUrl}', ${isVideo})">
+                        <div class="ad-image-container" style="${hasVideo ? 'cursor: default;' : ''}">
                             ${isVideo ? `<span class="media-type-badge">🎬 Video</span>` : ''}
                             ${hasTranscription ? `<span class="transcript-badge">📝 Transcript</span>` : ''}
-                            ${mediaUrl ? (
-                                isVideo ? `
-                                    <video class="ad-video" preload="metadata" muted>
-                                        <source src="${mediaUrl}" type="video/${mediaUrl.toLowerCase().endsWith('.mov') ? 'quicktime' : 'mp4'}">
-                                        Your browser does not support video playback.
-                                    </video>
-                                ` : `
-                                    <img src="${mediaUrl}" alt="${ad['Ad Headline']}" class="ad-image" loading="lazy">
-                                `
-                            ) : `
-                                <div style="padding: 60px 20px; text-align: center; color: #65676b;">
-                                    <div style="font-size: 48px; margin-bottom: 8px;">📷</div>
-                                    <div style="font-size: 14px;">No media</div>
-                                </div>
-                            `}
+                            ${mediaHtml}
                         </div>
 
                         <!-- Link Preview Box -->
@@ -1718,9 +1728,9 @@
                         <div class="transcription-toggle" onclick="toggleTranscription(this)">
                             <div class="transcription-toggle-left">
                                 <span class="transcription-toggle-icon">▶</span>
-                                <span class="info-section-title" style="margin: 0;">📝 Video Transcription</span>
+                                <span class="info-section-title" style="margin: 0;">📝 Video Transcript</span>
                             </div>
-                            <span style="font-size: 12px; color: #64748b;">Click to expand</span>
+                            <span class="transcription-hint" style="font-size: 12px; color: #64748b;">Click to expand</span>
                         </div>
                         <div class="transcription-content">${ad['Video Transcript']}</div>
                     </div>
@@ -1747,9 +1757,13 @@
         function toggleTranscription(element) {
             element.classList.toggle('expanded');
             const content = element.nextElementSibling;
-            content.classList.toggle('expanded');
-            const hint = element.querySelector('span:last-child');
-            hint.textContent = content.classList.contains('expanded') ? 'Click to collapse' : 'Click to expand';
+            if (content) {
+                content.classList.toggle('expanded');
+                const hint = element.querySelector('.transcription-hint');
+                if (hint) {
+                    hint.textContent = content.classList.contains('expanded') ? 'Click to collapse' : 'Click to expand';
+                }
+            }
         }
 
         function closeInfoModal() {
