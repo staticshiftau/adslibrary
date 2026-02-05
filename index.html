@@ -896,6 +896,176 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Video Player Styles */
+        .ad-video {
+            width: 100%;
+            display: block;
+            max-height: 500px;
+            background: #000;
+        }
+
+        .media-type-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 4px 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ad-image-container {
+            width: 100%;
+            background: #f0f2f5;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .ad-image-container:hover::after {
+            content: '🔍 Click to expand';
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            padding: 4px 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Lightbox Styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .lightbox-content img,
+        .lightbox-content video {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3001;
+            transition: all 0.2s;
+        }
+
+        .lightbox-close:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        /* Transcription Styles in Modal */
+        .transcription-section {
+            margin-bottom: 20px;
+        }
+
+        .transcription-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f0f4ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .transcription-toggle:hover {
+            background: #e0e7ff;
+        }
+
+        .transcription-toggle-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .transcription-toggle-icon {
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .transcription-toggle.expanded .transcription-toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .transcription-content {
+            display: none;
+            margin-top: 12px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #1e293b;
+            white-space: pre-line;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .transcription-content.expanded {
+            display: block;
+        }
+
+        .transcript-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            padding: 4px 10px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar-toggle {
@@ -1042,6 +1212,12 @@
         </div>
     </div>
 
+    <!-- Lightbox for Media -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
+        <div class="lightbox-content" id="lightboxContent" onclick="event.stopPropagation()"></div>
+    </div>
+
     <!-- Tag Edit Modal -->
     <div class="modal" id="tagModal">
         <div class="modal-content">
@@ -1074,7 +1250,7 @@
             spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
             apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8',
             sheetName: 'Ads Library',
-            range: 'A:W',
+            range: 'A:Y',  // Extended to include Video Transcription and Video URL columns
             updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags'
         };
 
@@ -1312,6 +1488,19 @@
             applyFilters();
         }
 
+        // Helper function to detect if URL is a video
+        function isVideoUrl(url) {
+            if (!url) return false;
+            const lowerUrl = url.toLowerCase();
+            return lowerUrl.endsWith('.mp4') ||
+                   lowerUrl.endsWith('.mov') ||
+                   lowerUrl.endsWith('.webm') ||
+                   lowerUrl.endsWith('.ogg') ||
+                   lowerUrl.includes('video') ||
+                   lowerUrl.includes('.mp4?') ||
+                   lowerUrl.includes('.mov?');
+        }
+
         function renderAds() {
             const grid = document.getElementById('adsGrid');
 
@@ -1321,13 +1510,19 @@
             }
 
             grid.innerHTML = filteredAds.map((ad, index) => {
+                // Check for Video URL first (dedicated video column), then fall back to Image Preview
+                const videoUrl = ad['Video URL'] || '';
                 const imageUrl = ad['Image Preview'] || ad['Creative URL'] || '';
+                const hasVideo = videoUrl && videoUrl.trim();
+                const mediaUrl = hasVideo ? videoUrl : imageUrl;
+                const isVideo = hasVideo || isVideoUrl(mediaUrl);
                 const brandLink = ad['Brands Ad Library'] || '#';
                 const landingPageUrl = ad['Landing Page URL'] || '#';
                 const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
                 const businessName = ad['Brand/Advertiser'] || 'Business';
                 const adCopy = ad['Ad Copy'] || '';
                 const shouldCollapse = adCopy.length > 125;
+                const hasTranscription = ad['Video Transcription'] && ad['Video Transcription'].trim();
 
                 return `
                     <div class="ad-card">
@@ -1359,14 +1554,23 @@
                             </div>
                         ` : ''}
 
-                        <!-- Ad Image -->
-                        <div class="ad-image-container">
-                            ${imageUrl ? `
-                                <img src="${imageUrl}" alt="${ad['Ad Headline']}" class="ad-image" loading="lazy">
-                            ` : `
+                        <!-- Ad Media (Image or Video) -->
+                        <div class="ad-image-container" onclick="openLightbox('${mediaUrl}', ${isVideo})">
+                            ${isVideo ? `<span class="media-type-badge">🎬 Video</span>` : ''}
+                            ${hasTranscription ? `<span class="transcript-badge">📝 Transcript</span>` : ''}
+                            ${mediaUrl ? (
+                                isVideo ? `
+                                    <video class="ad-video" preload="metadata" muted>
+                                        <source src="${mediaUrl}" type="video/${mediaUrl.toLowerCase().endsWith('.mov') ? 'quicktime' : 'mp4'}">
+                                        Your browser does not support video playback.
+                                    </video>
+                                ` : `
+                                    <img src="${mediaUrl}" alt="${ad['Ad Headline']}" class="ad-image" loading="lazy">
+                                `
+                            ) : `
                                 <div style="padding: 60px 20px; text-align: center; color: #65676b;">
                                     <div style="font-size: 48px; margin-bottom: 8px;">📷</div>
-                                    <div style="font-size: 14px;">No image</div>
+                                    <div style="font-size: 14px;">No media</div>
                                 </div>
                             `}
                         </div>
@@ -1492,6 +1696,19 @@
                     </div>
                 </div>
 
+                ${ad['Video Transcription'] ? `
+                    <div class="transcription-section">
+                        <div class="transcription-toggle" onclick="toggleTranscription(this)">
+                            <div class="transcription-toggle-left">
+                                <span class="transcription-toggle-icon">▶</span>
+                                <span class="info-section-title" style="margin: 0;">📝 Video Transcription</span>
+                            </div>
+                            <span style="font-size: 12px; color: #64748b;">Click to expand</span>
+                        </div>
+                        <div class="transcription-content">${ad['Video Transcription']}</div>
+                    </div>
+                ` : ''}
+
                 ${ad['Why It Works'] ? `
                     <div class="info-section">
                         <div class="info-section-title">💡 Why It Works</div>
@@ -1510,9 +1727,64 @@
             modal.classList.add('active');
         }
 
+        function toggleTranscription(element) {
+            element.classList.toggle('expanded');
+            const content = element.nextElementSibling;
+            content.classList.toggle('expanded');
+            const hint = element.querySelector('span:last-child');
+            hint.textContent = content.classList.contains('expanded') ? 'Click to collapse' : 'Click to expand';
+        }
+
         function closeInfoModal() {
             document.getElementById('infoModal').classList.remove('active');
         }
+
+        // Lightbox Functions
+        function openLightbox(mediaUrl, isVideo) {
+            if (!mediaUrl) return;
+
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+
+            if (isVideo) {
+                content.innerHTML = `
+                    <video controls autoplay style="max-width: 90vw; max-height: 90vh; border-radius: 8px;">
+                        <source src="${mediaUrl}" type="video/${mediaUrl.toLowerCase().endsWith('.mov') ? 'quicktime' : 'mp4'}">
+                        Your browser does not support video playback.
+                    </video>
+                `;
+            } else {
+                content.innerHTML = `
+                    <img src="${mediaUrl}" alt="Full size preview" style="max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px;">
+                `;
+            }
+
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event) {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+
+            // Pause any playing video
+            const video = content.querySelector('video');
+            if (video) {
+                video.pause();
+            }
+
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close lightbox with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+                closeInfoModal();
+                closeTagModal();
+            }
+        });
 
         // Tag Modal Functions
         function openTagModal(ad) {
