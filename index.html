@@ -1501,6 +1501,21 @@
                    lowerUrl.includes('.mov?');
         }
 
+        // Helper function to convert Google Drive links to embeddable/playable format
+        function convertDriveUrl(url) {
+            if (!url) return url;
+
+            // Check if it's a Google Drive link
+            const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
+            if (driveMatch) {
+                const fileId = driveMatch[1];
+                // Use the preview/embed format which works better for video playback
+                return `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+
+            return url;
+        }
+
         function renderAds() {
             const grid = document.getElementById('adsGrid');
 
@@ -1511,9 +1526,11 @@
 
             grid.innerHTML = filteredAds.map((ad, index) => {
                 // Check for Video URL first (dedicated video column), then fall back to Image Preview
-                const videoUrl = ad['Video URL'] || '';
+                const rawVideoUrl = ad['Video URL'] || '';
                 const imageUrl = ad['Image Preview'] || ad['Creative URL'] || '';
-                const hasVideo = videoUrl && videoUrl.trim();
+                const hasVideo = rawVideoUrl && rawVideoUrl.trim();
+                // Convert Google Drive URLs to playable format
+                const videoUrl = hasVideo ? convertDriveUrl(rawVideoUrl) : '';
                 const mediaUrl = hasVideo ? videoUrl : imageUrl;
                 const isVideo = hasVideo || isVideoUrl(mediaUrl);
                 const brandLink = ad['Brands Ad Library'] || '#';
@@ -1522,7 +1539,7 @@
                 const businessName = ad['Brand/Advertiser'] || 'Business';
                 const adCopy = ad['Ad Copy'] || '';
                 const shouldCollapse = adCopy.length > 125;
-                const hasTranscription = ad['Video Transcription'] && ad['Video Transcription'].trim();
+                const hasTranscription = ad['Video Transcript'] && ad['Video Transcript'].trim();
 
                 return `
                     <div class="ad-card">
@@ -1696,7 +1713,7 @@
                     </div>
                 </div>
 
-                ${ad['Video Transcription'] ? `
+                ${ad['Video Transcript'] ? `
                     <div class="transcription-section">
                         <div class="transcription-toggle" onclick="toggleTranscription(this)">
                             <div class="transcription-toggle-left">
@@ -1705,7 +1722,7 @@
                             </div>
                             <span style="font-size: 12px; color: #64748b;">Click to expand</span>
                         </div>
-                        <div class="transcription-content">${ad['Video Transcription']}</div>
+                        <div class="transcription-content">${ad['Video Transcript']}</div>
                     </div>
                 ` : ''}
 
