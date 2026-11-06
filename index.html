@@ -1066,6 +1066,88 @@
             gap: 4px;
         }
 
+        /* "New" badge on recently added ads */
+        .new-badge {
+            position: absolute;
+            top: 16px;
+            right: 52px;
+            padding: 3px 8px;
+            background: #16a34a;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            z-index: 10;
+        }
+
+        /* Where a search matched, when it isn't visible on the card */
+        .match-note {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #4338ca;
+            background: #eef2ff;
+            border-top: 1px solid #e0e7ff;
+        }
+
+        /* Inline transcript on the card */
+        .card-transcript {
+            border-top: 1px solid #e4e6eb;
+        }
+
+        .card-transcript-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            padding: 10px 12px;
+            background: #f8f9fa;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .card-transcript-toggle:hover {
+            background: #f0f4ff;
+        }
+
+        .card-transcript-toggle.expanded .transcription-toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .card-transcript-hint {
+            margin-left: auto;
+            font-size: 12px;
+            font-weight: 400;
+            color: #64748b;
+        }
+
+        .card-transcript-body {
+            display: none;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1e293b;
+            white-space: pre-line;
+            max-height: 240px;
+            overflow-y: auto;
+            background: #fbfbfd;
+        }
+
+        .card-transcript-body.expanded {
+            display: block;
+        }
+
+        mark {
+            background: #fde68a;
+            color: inherit;
+            padding: 0 1px;
+            border-radius: 2px;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar-toggle {
@@ -1108,7 +1190,7 @@
                 type="text"
                 id="globalSearch"
                 class="global-search-input"
-                placeholder="Search ads by headline, copy, or advertiser name..."
+                placeholder="Search advertiser, headline, copy, transcript, why it works..."
             >
         </div>
     </div>
@@ -1127,29 +1209,8 @@
                 <p class="sidebar-subtitle">Refine your ad search</p>
             </div>
 
-            <!-- Industry Filter -->
-            <div class="filter-section">
-                <label class="filter-label">Industry</label>
-                <select id="industryFilter" class="filter-dropdown">
-                    <option value="">All Industries</option>
-                </select>
-            </div>
-
-            <!-- Funnel Stage Filter -->
-            <div class="filter-section">
-                <label class="filter-label">Funnel Stage</label>
-                <select id="funnelStageFilter" class="filter-dropdown">
-                    <option value="">All Stages</option>
-                </select>
-            </div>
-
-            <!-- Offer Type Filter -->
-            <div class="filter-section">
-                <label class="filter-label">Offer Type</label>
-                <select id="offerTypeFilter" class="filter-dropdown">
-                    <option value="">All Offer Types</option>
-                </select>
-            </div>
+            <!-- Category Filters (built from FILTERS in the script) -->
+            <div id="categoryFilters"></div>
 
             <!-- Tags Section -->
             <div class="filter-section">
@@ -1182,8 +1243,9 @@
                         </div>
                     </div>
                     <select id="sortBy" class="sort-dropdown">
-                        <option value="newest">Sort by: Newest</option>
-                        <option value="oldest">Sort by: Oldest</option>
+                        <option value="newest">Sort by: Recently added</option>
+                        <option value="oldest">Sort by: Oldest first</option>
+                        <option value="rating">Sort by: Highest rated</option>
                     </select>
                 </div>
 
@@ -1248,7 +1310,7 @@
     <script>
         const CONFIG = {
             spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
-            apiKey: 'AIzaSyABznAS0fH0tYNh6wlS_iEL08b6znNJCL8',
+            apiKey: 'AIzaSyCUReqio38YB172WFZeFhS-hetFwYoT9CE',  // restricted: Sheets API only, staticshiftau.github.io referrer only
             sheetName: 'Ads Library',
             range: 'A:Y',  // Extended to include Video Transcription and Video URL columns
             updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags'
@@ -1260,13 +1322,64 @@
         let filteredAds = [];
         let allUniqueTags = new Set(PREDEFINED_TAGS);
         let currentAdForTagEdit = null;
+        // Category filters. Value lists match the controlled lists the transcribe-reel skill
+        // writes (project-management/.claude/skills/transcribe-reel/SKILL.md). Values in the sheet
+        // that aren't on a list still appear, after the listed ones, so nothing is hidden.
+        const FILTERS = [
+            { id: 'industry', field: 'Industry', label: 'Industry', all: 'All Industries',
+              values: ['B2B Services', 'Coaching/Consulting', 'Agency/Marketing', 'Finance/Fintech', 'SaaS', 'E-commerce', 'Real Estate'] },
+            { id: 'adType', field: 'Ad Type', label: 'Ad Type', all: 'All Ad Types',
+              values: ['Static Image', 'Video', 'Carousel'] },
+            { id: 'funnelStage', field: 'Funnel Stage', label: 'Funnel Stage', all: 'All Stages',
+              values: ['Cold/TOF', 'MOF', 'BOF'] },
+            { id: 'objective', field: 'Campaign Objective', label: 'Campaign Objective', all: 'All Objectives',
+              values: ['Leads', 'Sales', 'Event Registration'] },
+            { id: 'offerType', field: 'Offer Type', label: 'Offer Type', all: 'All Offer Types',
+              values: ['Strategy Session', 'Guarantee-Based Offer', 'Lead Magnet', 'Paid Offer (Non-Guaranteed)', 'Audit'] },
+            { id: 'hookType', field: 'Hook Type', label: 'Hook Type', all: 'All Hook Types',
+              values: ['Problem-Agitate', 'Outcome/Desire', 'Contrarian', 'Social Proof', 'Authority', 'Guarantee', 'Cost Contrast', 'Quiz/Challenge', 'Relatable', 'Fear/Risk'] },
+            { id: 'visualStyle', field: 'Visual Style', label: 'Visual Style', all: 'All Visual Styles',
+              values: ['Founder-led', 'UGC/Raw', 'Polished/Studio', 'Meme/Trendy', 'Infographic', 'Text-led', 'Testimonial'] },
+            { id: 'rating', field: 'Rating', label: 'Rating', all: 'Any Rating', minimum: true,
+              values: ['5', '4', '3'] }
+        ];
+
+        // Fields the global search looks in
+        const SEARCH_FIELDS = [
+            ['Brand/Advertiser', 'Advertiser'], ['Ad Headline', 'Headline'], ['Ad Copy', 'Copy'],
+            ['Video Transcript', 'Transcript'], ['Why It Works', 'Why It Works'],
+            ['What We Can Adapt', 'What We Can Adapt'], ['Tags', 'Tags']
+        ];
+
+        const NEW_BADGE_DAYS = 14;
+
         let activeFilters = {
             search: '',
-            industry: '',
-            funnelStage: '',
-            offerType: '',
+            categories: {},
             tags: new Set()
         };
+
+        function escapeHtml(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function escapeRegExp(value) {
+            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Escapes text and wraps each search match in <mark>
+        function highlight(text, term) {
+            const safe = escapeHtml(text);
+            if (!term) return safe;
+            return safe.replace(new RegExp(escapeRegExp(escapeHtml(term)), 'gi'), m => `<mark>${m}</mark>`);
+        }
+
+        function parseDate(value) {
+            const t = Date.parse(value);
+            return isNaN(t) ? 0 : t;
+        }
 
         async function fetchAds() {
             try {
@@ -1282,13 +1395,14 @@
                 const headers = data.values[0];
                 const rows = data.values.slice(1);
 
-                allAds = rows.map(row => {
+                allAds = rows.map((row, rowIndex) => {
                     const ad = {};
                     headers.forEach((header, index) => {
                         ad[header] = row[index] || '';
                     });
+                    ad._row = rowIndex + 2;  // sheet row; later rows were added later
                     return ad;
-                });
+                }).filter(ad => ad['Brand/Advertiser'] || ad['Ad Headline'] || ad['Ad Copy']);
 
                 // Extract all unique tags
                 allAds.forEach(ad => {
@@ -1309,38 +1423,53 @@
             }
         }
 
+        function matchesCategory(ad, filter, value) {
+            const cell = (ad[filter.field] || '').trim();
+            if (filter.minimum) return (parseInt(cell) || 0) >= parseInt(value);
+            return cell === value;
+        }
+
         function populateFilters() {
-            // Populate Industry Filter
-            const industries = [...new Set(allAds.map(ad => ad['Industry']).filter(i => i))].sort();
-            const industrySelect = document.getElementById('industryFilter');
-            industries.forEach(industry => {
-                const option = document.createElement('option');
-                option.value = industry;
-                option.textContent = industry;
-                industrySelect.appendChild(option);
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = '';
+
+            FILTERS.forEach(filter => {
+                // Listed values first, then anything else found in the sheet
+                const found = [...new Set(allAds.map(ad => (ad[filter.field] || '').trim()).filter(v => v))];
+                const extras = filter.minimum ? [] : found.filter(v => !filter.values.includes(v)).sort();
+                const values = [...filter.values, ...extras];
+
+                const section = document.createElement('div');
+                section.className = 'filter-section';
+                section.innerHTML = `<label class="filter-label" for="filter-${filter.id}">${filter.label}</label>`;
+
+                const select = document.createElement('select');
+                select.id = `filter-${filter.id}`;
+                select.className = 'filter-dropdown';
+                select.appendChild(new Option(filter.all, ''));
+
+                values.forEach(value => {
+                    const count = allAds.filter(ad => matchesCategory(ad, filter, value)).length;
+                    if (!count && !filter.values.includes(value)) return;
+                    const text = filter.minimum
+                        ? `${'⭐'.repeat(parseInt(value))}${value === '5' ? '' : ' and up'} (${count})`
+                        : `${value} (${count})`;
+                    const option = new Option(text, value);
+                    if (!count) option.disabled = true;
+                    select.appendChild(option);
+                });
+
+                select.value = activeFilters.categories[filter.id] || '';
+                select.addEventListener('change', e => {
+                    if (e.target.value) activeFilters.categories[filter.id] = e.target.value;
+                    else delete activeFilters.categories[filter.id];
+                    applyFilters();
+                });
+
+                section.appendChild(select);
+                container.appendChild(section);
             });
 
-            // Populate Funnel Stage Filter
-            const funnelStages = [...new Set(allAds.map(ad => ad['Funnel Stage']).filter(i => i))].sort();
-            const funnelSelect = document.getElementById('funnelStageFilter');
-            funnelStages.forEach(stage => {
-                const option = document.createElement('option');
-                option.value = stage;
-                option.textContent = stage;
-                funnelSelect.appendChild(option);
-            });
-
-            // Populate Offer Type Filter
-            const offerTypes = [...new Set(allAds.map(ad => ad['Offer Type']).filter(i => i))].sort();
-            const offerSelect = document.getElementById('offerTypeFilter');
-            offerTypes.forEach(type => {
-                const option = document.createElement('option');
-                option.value = type;
-                option.textContent = type;
-                offerSelect.appendChild(option);
-            });
-
-            // Populate Tags
             populateSidebarTags();
         }
 
@@ -1379,15 +1508,18 @@
         }
 
         function applyFilters() {
+            const term = activeFilters.search;
             filteredAds = allAds.filter(ad => {
-                const matchesSearch = !activeFilters.search ||
-                    ad['Brand/Advertiser'].toLowerCase().includes(activeFilters.search) ||
-                    ad['Ad Headline'].toLowerCase().includes(activeFilters.search) ||
-                    ad['Ad Copy'].toLowerCase().includes(activeFilters.search);
+                // Record where the search term was found, so the card can say so
+                ad._matchedIn = term
+                    ? SEARCH_FIELDS.filter(([field]) => (ad[field] || '').toLowerCase().includes(term)).map(([, label]) => label)
+                    : [];
+                const matchesSearch = !term || ad._matchedIn.length > 0;
 
-                const matchesIndustry = !activeFilters.industry || ad['Industry'] === activeFilters.industry;
-                const matchesFunnelStage = !activeFilters.funnelStage || ad['Funnel Stage'] === activeFilters.funnelStage;
-                const matchesOfferType = !activeFilters.offerType || ad['Offer Type'] === activeFilters.offerType;
+                const matchesCategories = FILTERS.every(filter => {
+                    const value = activeFilters.categories[filter.id];
+                    return !value || matchesCategory(ad, filter, value);
+                });
 
                 let matchesTags = true;
                 if (activeFilters.tags.size > 0) {
@@ -1395,7 +1527,7 @@
                     matchesTags = adTags.some(tag => activeFilters.tags.has(tag));
                 }
 
-                return matchesSearch && matchesIndustry && matchesFunnelStage && matchesOfferType && matchesTags;
+                return matchesSearch && matchesCategories && matchesTags;
             });
 
             sortAds();
@@ -1406,12 +1538,17 @@
 
         function sortAds() {
             const sortBy = document.getElementById('sortBy').value;
+            // Many ads share a Date Added, so ties fall back to sheet order (later row = added later)
+            const added = (a, b) => (parseDate(a['Date Added']) - parseDate(b['Date Added'])) || (a._row - b._row);
             switch(sortBy) {
                 case 'newest':
-                    filteredAds.sort((a, b) => new Date(b['Date Added']) - new Date(a['Date Added']));
+                    filteredAds.sort((a, b) => added(b, a));
                     break;
                 case 'oldest':
-                    filteredAds.sort((a, b) => new Date(a['Date Added']) - new Date(b['Date Added']));
+                    filteredAds.sort(added);
+                    break;
+                case 'rating':
+                    filteredAds.sort((a, b) => ((parseInt(b['Rating']) || 0) - (parseInt(a['Rating']) || 0)) || added(b, a));
                     break;
             }
         }
@@ -1428,29 +1565,16 @@
                 }));
             }
 
-            if (activeFilters.industry) {
-                container.appendChild(createFilterPill('Industry', activeFilters.industry, () => {
-                    document.getElementById('industryFilter').value = '';
-                    activeFilters.industry = '';
+            FILTERS.forEach(filter => {
+                const value = activeFilters.categories[filter.id];
+                if (!value) return;
+                const shown = filter.minimum ? `${value}+ stars` : value;
+                container.appendChild(createFilterPill(filter.label, shown, () => {
+                    document.getElementById(`filter-${filter.id}`).value = '';
+                    delete activeFilters.categories[filter.id];
                     applyFilters();
                 }));
-            }
-
-            if (activeFilters.funnelStage) {
-                container.appendChild(createFilterPill('Funnel Stage', activeFilters.funnelStage, () => {
-                    document.getElementById('funnelStageFilter').value = '';
-                    activeFilters.funnelStage = '';
-                    applyFilters();
-                }));
-            }
-
-            if (activeFilters.offerType) {
-                container.appendChild(createFilterPill('Offer Type', activeFilters.offerType, () => {
-                    document.getElementById('offerTypeFilter').value = '';
-                    activeFilters.offerType = '';
-                    applyFilters();
-                }));
-            }
+            });
 
             activeFilters.tags.forEach(tag => {
                 container.appendChild(createFilterPill('Tag', tag, () => {
@@ -1463,7 +1587,7 @@
             const pill = document.createElement('div');
             pill.className = 'active-filter-pill';
             pill.innerHTML = `
-                <span>${label}: ${value}</span>
+                <span>${escapeHtml(label)}: ${escapeHtml(value)}</span>
                 <button class="remove-filter">×</button>
             `;
             pill.querySelector('.remove-filter').onclick = onRemove;
@@ -1472,15 +1596,13 @@
 
         function clearAllFilters() {
             document.getElementById('globalSearch').value = '';
-            document.getElementById('industryFilter').value = '';
-            document.getElementById('funnelStageFilter').value = '';
-            document.getElementById('offerTypeFilter').value = '';
+            FILTERS.forEach(filter => {
+                document.getElementById(`filter-${filter.id}`).value = '';
+            });
 
             activeFilters = {
                 search: '',
-                industry: '',
-                funnelStage: '',
-                offerType: '',
+                categories: {},
                 tags: new Set()
             };
 
@@ -1530,6 +1652,11 @@
                 const adCopy = ad['Ad Copy'] || '';
                 const shouldCollapse = adCopy.length > 125;
                 const hasTranscription = ad['Video Transcript'] && ad['Video Transcript'].trim();
+                const addedAt = parseDate(ad['Date Added']);
+                const isNew = addedAt && (Date.now() - addedAt) < NEW_BADGE_DAYS * 86400000;
+                const term = activeFilters.search;
+                const transcriptMatched = term && (ad._matchedIn || []).includes('Transcript');
+                const matchedElsewhere = (ad._matchedIn || []).filter(l => !['Advertiser', 'Headline', 'Copy'].includes(l));
 
                 // Build media HTML based on type
                 let mediaHtml = '';
@@ -1571,6 +1698,7 @@
                         <button class="info-btn" onclick='openInfoModal(${JSON.stringify(ad).replace(/'/g, "&#39;")})' title="More Info">
                             i
                         </button>
+                        ${isNew ? '<span class="new-badge">New</span>' : ''}
 
                         <!-- Facebook Ad Header -->
                         <div class="ad-header">
@@ -1600,6 +1728,21 @@
                             ${isVideo ? `<span class="media-type-badge">🎬 Video</span>` : ''}
                             ${mediaHtml}
                         </div>
+
+                        ${matchedElsewhere.length ? `
+                            <div class="match-note">🔍 Matched in: ${matchedElsewhere.map(escapeHtml).join(', ')}</div>
+                        ` : ''}
+
+                        <!-- Inline Video Transcript -->
+                        ${hasTranscription ? `
+                            <div class="card-transcript">
+                                <button class="card-transcript-toggle${transcriptMatched ? ' expanded' : ''}" onclick="toggleCardTranscript(this)" aria-expanded="${transcriptMatched ? 'true' : 'false'}">
+                                    <span class="transcription-toggle-icon">▶</span> 📝 Transcript
+                                    <span class="card-transcript-hint">${transcriptMatched ? 'Hide' : 'Show'}</span>
+                                </button>
+                                <div class="card-transcript-body${transcriptMatched ? ' expanded' : ''}">${highlight(ad['Video Transcript'], term)}</div>
+                            </div>
+                        ` : ''}
 
                         <!-- Link Preview Box -->
                         <div class="ad-link-preview">
@@ -1639,7 +1782,7 @@
                                 <div class="ad-tags-header">🏷️ Tags</div>
                                 <div class="ad-tags-list">
                                     ${tags.length > 0 ?
-                                        tags.map(tag => `<span class="tag-chip">${tag}</span>`).join('') :
+                                        tags.map(tag => `<span class="tag-chip">${escapeHtml(tag)}</span>`).join('') :
                                         '<span style="color: #94a3b8; font-size: 12px;">No tags</span>'
                                     }
                                 </div>
@@ -1651,6 +1794,14 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function toggleCardTranscript(button) {
+            const body = button.nextElementSibling;
+            const open = body.classList.toggle('expanded');
+            button.classList.toggle('expanded', open);
+            button.setAttribute('aria-expanded', open ? 'true' : 'false');
+            button.querySelector('.card-transcript-hint').textContent = open ? 'Hide' : 'Show';
         }
 
         function toggleAdCopy(index, fullText) {
@@ -1731,21 +1882,21 @@
                             </div>
                             <span class="transcription-hint" style="font-size: 12px; color: #64748b;">Click to expand</span>
                         </div>
-                        <div class="transcription-content">${ad['Video Transcript']}</div>
+                        <div class="transcription-content">${highlight(ad['Video Transcript'], activeFilters.search)}</div>
                     </div>
                 ` : ''}
 
                 ${ad['Why It Works'] ? `
                     <div class="info-section">
                         <div class="info-section-title">💡 Why It Works</div>
-                        <div class="info-text">${ad['Why It Works']}</div>
+                        <div class="info-text">${highlight(ad['Why It Works'], activeFilters.search)}</div>
                     </div>
                 ` : ''}
 
                 ${ad['What We Can Adapt'] ? `
                     <div class="info-section">
                         <div class="info-section-title">🔧 What We Can Adapt</div>
-                        <div class="info-text">${ad['What We Can Adapt']}</div>
+                        <div class="info-text">${highlight(ad['What We Can Adapt'], activeFilters.search)}</div>
                     </div>
                 ` : ''}
             `;
@@ -1942,22 +2093,7 @@
 
         // Event Listeners
         document.getElementById('globalSearch').addEventListener('input', (e) => {
-            activeFilters.search = e.target.value.toLowerCase();
-            applyFilters();
-        });
-
-        document.getElementById('industryFilter').addEventListener('change', (e) => {
-            activeFilters.industry = e.target.value;
-            applyFilters();
-        });
-
-        document.getElementById('funnelStageFilter').addEventListener('change', (e) => {
-            activeFilters.funnelStage = e.target.value;
-            applyFilters();
-        });
-
-        document.getElementById('offerTypeFilter').addEventListener('change', (e) => {
-            activeFilters.offerType = e.target.value;
+            activeFilters.search = e.target.value.trim().toLowerCase();
             applyFilters();
         });
 
