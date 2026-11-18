@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
     <title>Static Shift Ads Library</title>
     <style>
         * {
@@ -1081,6 +1082,177 @@
             z-index: 10;
         }
 
+        /* Link to the Video Script Frameworks page, beside the search box */
+        .top-link {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .top-link:hover {
+            background: #5568d3;
+        }
+
+        @media (max-width: 600px) {
+            .global-search {
+                padding: 12px;
+            }
+
+            .global-search-wrapper {
+                gap: 8px;
+            }
+
+            .search-icon {
+                display: none;
+            }
+
+            .global-search-input {
+                min-width: 0;
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .top-link {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Confirmed winner: badge, card row and dialog */
+        .winner-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #b45309;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .winner-row {
+            padding: 10px 16px;
+            background: #fffbeb;
+            border-top: 1px solid #e4e6eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .winner-row.unmarked {
+            background: #f8f9fa;
+        }
+
+        .winner-row-note {
+            flex: 1;
+            min-width: 0;
+            font-size: 12px;
+            color: #78350f;
+            overflow-wrap: anywhere;
+        }
+
+        .winner-btn {
+            padding: 8px 12px;
+            background: white;
+            color: #92400e;
+            border: 1px solid #d97706;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .winner-btn:hover {
+            background: #fef3c7;
+        }
+
+        .winner-btn.marked {
+            background: #b45309;
+            border-color: #b45309;
+            color: white;
+        }
+
+        .winner-note-input {
+            width: 100%;
+            min-height: 96px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .winner-note-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .winner-note-help {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 8px 0 16px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .winner-error {
+            display: none;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            background: #fef2f2;
+            color: #991b1b;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .winner-error.active {
+            display: block;
+        }
+
+        .winner-remove-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            background: white;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .winner-remove-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .winner-detail {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+        }
+
+        .winner-detail-note {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #78350f;
+            overflow-wrap: anywhere;
+        }
+
         /* Where a search matched, when it isn't visible on the card */
         .match-note {
             padding: 8px 12px;
@@ -1192,6 +1364,7 @@
                 class="global-search-input"
                 placeholder="Search advertiser, headline, copy, transcript, why it works..."
             >
+            <a class="top-link" href="frameworks.html">Video Script Frameworks</a>
         </div>
     </div>
 
@@ -1246,6 +1419,7 @@
                         <option value="newest">Sort by: Recently added</option>
                         <option value="oldest">Sort by: Oldest first</option>
                         <option value="rating">Sort by: Highest rated</option>
+                        <option value="winner">Sort by: Confirmed winners first</option>
                     </select>
                 </div>
 
@@ -1307,14 +1481,47 @@
         </div>
     </div>
 
+    <!-- Confirmed Winner Modal -->
+    <div class="modal" id="winnerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="winnerModalTitle">Mark as confirmed winner</h2>
+                <button class="modal-close" onclick="closeWinnerModal()">×</button>
+            </div>
+
+            <div class="winner-error" id="winnerError" role="alert"></div>
+
+            <label class="filter-label" for="winnerNote">How do you know it's a winner?</label>
+            <textarea
+                id="winnerNote"
+                class="winner-note-input"
+                maxlength="300"
+                placeholder="For example: ran for 8 months, or the advertiser told us"
+            ></textarea>
+            <div class="winner-note-help">
+                <span>This note is public. Anyone with the link to this page can read it.</span>
+                <span id="winnerNoteCount">0 / 300</span>
+            </div>
+
+            <button class="save-tags-btn" id="winnerSaveBtn" onclick="saveWinner(true)">Save</button>
+            <button class="winner-remove-btn" id="winnerRemoveBtn" onclick="saveWinner(false)">Remove confirmed winner</button>
+        </div>
+    </div>
+
     <script>
         const CONFIG = {
             spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
             apiKey: 'AIzaSyCUReqio38YB172WFZeFhS-hetFwYoT9CE',  // restricted: Sheets API only, staticshiftau.github.io referrer only
             sheetName: 'Ads Library',
-            range: 'A:Y',  // Extended to include Video Transcription and Video URL columns
-            updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags'
+            range: 'A:AB',  // Through Confirmed Winner, Winner Note and Structure
+            updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags',
+            updateWinnerWebhook: 'https://n8n.srv1288954.hstgr.cloud/webhook/ads-library-update-winner'
         };
+
+        // The Sheets API key only works from staticshiftau.github.io. On a local preview the page
+        // reads dev-fixture.json instead (a dump of the sheet, never committed).
+        const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+        const WINNER_NOTE_MAX = 300;
 
         const PREDEFINED_TAGS = ['Eddie', 'HRAO', 'Stirling', 'Corbel', 'IGL', 'Ange', 'Static-Shift'];
 
@@ -1341,7 +1548,10 @@
             { id: 'visualStyle', field: 'Visual Style', label: 'Visual Style', all: 'All Visual Styles',
               values: ['Founder-led', 'UGC/Raw', 'Polished/Studio', 'Meme/Trendy', 'Infographic', 'Text-led', 'Testimonial'] },
             { id: 'rating', field: 'Rating', label: 'Rating', all: 'Any Rating', minimum: true,
-              values: ['5', '4', '3'] }
+              values: ['5', '4', '3'] },
+            // Rating is our opinion. Confirmed Winner means we have inside knowledge that it performed.
+            { id: 'winner', field: 'Confirmed Winner', label: 'Confirmed Winner', all: 'All ads',
+              values: ['Yes'], fixed: true, optionLabel: 'Confirmed winners only' }
         ];
 
         // Fields the global search looks in
@@ -1365,6 +1575,21 @@
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        // Only http(s) links are ever put into an href or src
+        function safeUrl(value) {
+            const url = String(value == null ? '' : value).trim();
+            return /^https?:\/\//i.test(url) ? escapeHtml(url) : '';
+        }
+
+        // Buttons pass the ad's sheet row, never the ad itself, so no sheet text ends up inside a click handler
+        function findAd(row) {
+            return allAds.find(ad => ad._row === row) || null;
+        }
+
+        function isWinner(ad) {
+            return (ad['Confirmed Winner'] || '').trim() === 'Yes';
+        }
+
         function escapeRegExp(value) {
             return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
@@ -1383,8 +1608,10 @@
 
         async function fetchAds() {
             try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${CONFIG.sheetName}!${CONFIG.range}?key=${CONFIG.apiKey}`;
-                const response = await fetch(url);
+                const url = IS_LOCAL
+                    ? 'dev-fixture.json'
+                    : `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${CONFIG.sheetName}!${CONFIG.range}?key=${CONFIG.apiKey}`;
+                const response = await fetch(url, { cache: 'no-cache' });
                 const data = await response.json();
 
                 if (!data.values || data.values.length < 2) {
@@ -1436,7 +1663,7 @@
             FILTERS.forEach(filter => {
                 // Listed values first, then anything else found in the sheet
                 const found = [...new Set(allAds.map(ad => (ad[filter.field] || '').trim()).filter(v => v))];
-                const extras = filter.minimum ? [] : found.filter(v => !filter.values.includes(v)).sort();
+                const extras = (filter.minimum || filter.fixed) ? [] : found.filter(v => !filter.values.includes(v)).sort();
                 const values = [...filter.values, ...extras];
 
                 const section = document.createElement('div');
@@ -1453,7 +1680,7 @@
                     if (!count && !filter.values.includes(value)) return;
                     const text = filter.minimum
                         ? `${'⭐'.repeat(parseInt(value))}${value === '5' ? '' : ' and up'} (${count})`
-                        : `${value} (${count})`;
+                        : `${filter.optionLabel || value} (${count})`;
                     const option = new Option(text, value);
                     if (!count) option.disabled = true;
                     select.appendChild(option);
@@ -1550,6 +1777,9 @@
                 case 'rating':
                     filteredAds.sort((a, b) => ((parseInt(b['Rating']) || 0) - (parseInt(a['Rating']) || 0)) || added(b, a));
                     break;
+                case 'winner':
+                    filteredAds.sort((a, b) => (isWinner(b) - isWinner(a)) || added(b, a));
+                    break;
             }
         }
 
@@ -1568,7 +1798,7 @@
             FILTERS.forEach(filter => {
                 const value = activeFilters.categories[filter.id];
                 if (!value) return;
-                const shown = filter.minimum ? `${value}+ stars` : value;
+                const shown = filter.minimum ? `${value}+ stars` : (filter.optionLabel || value);
                 container.appendChild(createFilterPill(filter.label, shown, () => {
                     document.getElementById(`filter-${filter.id}`).value = '';
                     delete activeFilters.categories[filter.id];
@@ -1640,15 +1870,18 @@
 
             grid.innerHTML = filteredAds.map((ad, index) => {
                 // Check for Video URL first (dedicated video column), then fall back to Image Preview
+                // Every value from the sheet is escaped before it goes into the page.
                 const rawVideoUrl = ad['Video URL'] || '';
-                const imageUrl = ad['Image Preview'] || ad['Creative URL'] || '';
+                const imageUrl = safeUrl(ad['Image Preview'] || ad['Creative URL'] || '');
                 const hasVideo = rawVideoUrl && rawVideoUrl.trim();
                 const gdriveFileId = hasVideo ? getGoogleDriveFileId(rawVideoUrl) : null;
                 const isVideo = hasVideo;
-                const brandLink = ad['Brands Ad Library'] || '#';
-                const landingPageUrl = ad['Landing Page URL'] || '#';
+                const brandLink = safeUrl(ad['Brands Ad Library']);
+                const landingPageUrl = safeUrl(ad['Landing Page URL']);
                 const tags = (ad['Interface Tags'] || '').split(',').map(t => t.trim()).filter(t => t);
                 const businessName = ad['Brand/Advertiser'] || 'Business';
+                const winner = isWinner(ad);
+                const winnerNote = (ad['Winner Note'] || '').trim();
                 const adCopy = ad['Ad Copy'] || '';
                 const shouldCollapse = adCopy.length > 125;
                 const hasTranscription = ad['Video Transcript'] && ad['Video Transcript'].trim();
@@ -1664,7 +1897,7 @@
                     // Google Drive video - use iframe embed (500px height for reel/video ad format)
                     mediaHtml = `
                         <iframe
-                            src="https://drive.google.com/file/d/${gdriveFileId}/preview"
+                            src="https://drive.google.com/file/d/${encodeURIComponent(gdriveFileId)}/preview"
                             class="ad-video"
                             style="width: 100%; height: 500px; border: none;"
                             allow="autoplay"
@@ -1675,13 +1908,13 @@
                     // Direct video URL
                     mediaHtml = `
                         <video class="ad-video" preload="metadata" muted controls>
-                            <source src="${rawVideoUrl}" type="video/mp4">
+                            <source src="${safeUrl(rawVideoUrl)}" type="video/mp4">
                             Your browser does not support video playback.
                         </video>
                     `;
                 } else if (imageUrl) {
                     // Image
-                    mediaHtml = `<img src="${imageUrl}" alt="${ad['Ad Headline']}" class="ad-image" loading="lazy" onclick="openLightbox('${imageUrl}', false)">`;
+                    mediaHtml = `<img src="${imageUrl}" alt="${escapeHtml(ad['Ad Headline'])}" class="ad-image" loading="lazy" onclick="openLightbox(this.src, false)">`;
                 } else {
                     // No media
                     mediaHtml = `
@@ -1695,7 +1928,7 @@
                 return `
                     <div class="ad-card">
                         <!-- Info Button -->
-                        <button class="info-btn" onclick='openInfoModal(${JSON.stringify(ad).replace(/'/g, "&#39;")})' title="More Info">
+                        <button class="info-btn" onclick="openInfoModal(findAd(${ad._row}))" title="More Info">
                             i
                         </button>
                         ${isNew ? '<span class="new-badge">New</span>' : ''}
@@ -1703,23 +1936,23 @@
                         <!-- Facebook Ad Header -->
                         <div class="ad-header">
                             <div class="ad-profile">
-                                ${businessName.charAt(0).toUpperCase()}
+                                ${escapeHtml(businessName.charAt(0).toUpperCase())}
                             </div>
                             <div class="ad-header-info">
                                 <div class="ad-business-name">
-                                    ${brandLink && brandLink !== '#' ?
-                                        `<a href="${brandLink}" target="_blank" rel="noopener noreferrer">${businessName}</a>` :
-                                        businessName
+                                    ${brandLink ?
+                                        `<a href="${brandLink}" target="_blank" rel="noopener noreferrer">${escapeHtml(businessName)}</a>` :
+                                        escapeHtml(businessName)
                                     }
                                 </div>
-                                <div class="ad-sponsored">Sponsored</div>
+                                <div class="ad-sponsored">Sponsored${winner ? ' <span class="winner-badge">🏆 Confirmed winner</span>' : ''}</div>
                             </div>
                         </div>
 
                         <!-- Ad Body Copy -->
                         ${adCopy ? `
                             <div class="ad-body-copy">
-                                <span class="ad-copy-text" id="adCopyText${index}">${shouldCollapse ? adCopy.substring(0, 125) + '...' : adCopy}</span>${shouldCollapse ? `<span class="see-more" onclick="toggleAdCopy(${index}, \`${adCopy.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)" id="seeMore${index}"> See more</span>` : ''}
+                                <span class="ad-copy-text" id="adCopyText${index}">${escapeHtml(shouldCollapse ? adCopy.substring(0, 125) + '...' : adCopy)}</span>${shouldCollapse ? `<span class="see-more" onclick="toggleAdCopy(${index})" id="seeMore${index}"> See more</span>` : ''}
                             </div>
                         ` : ''}
 
@@ -1748,15 +1981,15 @@
                         <div class="ad-link-preview">
                             ${ad['Landing Page URL'] && ad['Landing Page URL'].includes('.') ? `
                                 <div class="ad-website-url">
-                                    ${ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split(/[/?#]/)[0].toUpperCase()}
+                                    ${escapeHtml(ad['Landing Page URL'].replace(/^https?:\/\/(www\.)?/, '').split(/[/?#]/)[0].toUpperCase())}
                                 </div>
                             ` : ''}
                             ${ad['Ad Headline'] ? `
                                 <div class="ad-headline-cta">
-                                    <div class="ad-headline">${ad['Ad Headline']}</div>
-                                    ${landingPageUrl && landingPageUrl !== '#' ?
-                                        `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-cta-button">${ad['CTA Button Text'] || 'Learn more'}</a>` :
-                                        `<button class="ad-cta-button">${ad['CTA Button Text'] || 'Learn more'}</button>`
+                                    <div class="ad-headline">${escapeHtml(ad['Ad Headline'])}</div>
+                                    ${landingPageUrl ?
+                                        `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-cta-button">${escapeHtml(ad['CTA Button Text'] || 'Learn more')}</a>` :
+                                        `<button class="ad-cta-button">${escapeHtml(ad['CTA Button Text'] || 'Learn more')}</button>`
                                     }
                                 </div>
                             ` : ''}
@@ -1772,9 +2005,17 @@
                         <!-- Started Running On -->
                         ${ad['Started Running On'] ? `
                             <div class="ad-started-date">
-                                📅 Started Running On: <strong>${ad['Started Running On']}</strong>
+                                📅 Started Running On: <strong>${escapeHtml(ad['Started Running On'])}</strong>
                             </div>
                         ` : ''}
+
+                        <!-- Confirmed Winner -->
+                        <div class="winner-row${winner ? '' : ' unmarked'}">
+                            <div class="winner-row-note">${winner ? escapeHtml(winnerNote || 'No note added') : ''}</div>
+                            <button class="winner-btn${winner ? ' marked' : ''}" onclick="openWinnerModal(${ad._row})">
+                                ${winner ? '🏆 Confirmed winner' : 'Mark as winner'}
+                            </button>
+                        </div>
 
                         <!-- Tags Section -->
                         <div class="ad-tags-section">
@@ -1787,7 +2028,7 @@
                                     }
                                 </div>
                             </div>
-                            <button class="add-tag-btn" onclick='openTagModal(${JSON.stringify(ad).replace(/'/g, "&#39;")})'>
+                            <button class="add-tag-btn" onclick="openTagModal(${ad._row})">
                                 Add Tag
                             </button>
                         </div>
@@ -1804,7 +2045,8 @@
             button.querySelector('.card-transcript-hint').textContent = open ? 'Hide' : 'Show';
         }
 
-        function toggleAdCopy(index, fullText) {
+        function toggleAdCopy(index) {
+            const fullText = (filteredAds[index] && filteredAds[index]['Ad Copy']) || '';
             const textElement = document.getElementById(`adCopyText${index}`);
             const seeMoreElement = document.getElementById(`seeMore${index}`);
             const currentText = textElement.textContent;
@@ -1825,43 +2067,53 @@
 
         // Info Modal Functions
         function openInfoModal(ad) {
+            if (!ad) return;
             const modal = document.getElementById('infoModal');
             const body = document.getElementById('infoModalBody');
 
             const rating = parseInt(ad['Rating']) || 0;
             const stars = rating > 0 ? '⭐'.repeat(rating) : 'Not rated';
+            const adLink = safeUrl(ad['Ad Link']);
+            const field = name => escapeHtml(ad[name] || 'N/A');
 
             body.innerHTML = `
-                ${ad['Ad Link'] ? `
-                    <a href="${ad['Ad Link']}" target="_blank" rel="noopener noreferrer" class="ad-link-button">
+                ${adLink ? `
+                    <a href="${adLink}" target="_blank" rel="noopener noreferrer" class="ad-link-button">
                         🔗 View Original Ad on Facebook
                     </a>
+                ` : ''}
+
+                ${isWinner(ad) ? `
+                    <div class="winner-detail">
+                        <span class="winner-badge">🏆 Confirmed winner</span>
+                        <div class="winner-detail-note">${escapeHtml((ad['Winner Note'] || '').trim() || 'No note added')}</div>
+                    </div>
                 ` : ''}
 
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Ad Type</div>
-                        <div class="info-value">${ad['Ad Type'] || 'N/A'}</div>
+                        <div class="info-value">${field('Ad Type')}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Funnel Stage</div>
-                        <div class="info-value">${ad['Funnel Stage'] || 'N/A'}</div>
+                        <div class="info-value">${field('Funnel Stage')}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Campaign Objective</div>
-                        <div class="info-value">${ad['Campaign Objective'] || 'N/A'}</div>
+                        <div class="info-value">${field('Campaign Objective')}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Offer Type</div>
-                        <div class="info-value">${ad['Offer Type'] || 'N/A'}</div>
+                        <div class="info-value">${field('Offer Type')}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Hook Type</div>
-                        <div class="info-value">${ad['Hook Type'] || 'N/A'}</div>
+                        <div class="info-value">${field('Hook Type')}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Visual Style</div>
-                        <div class="info-value">${ad['Visual Style'] || 'N/A'}</div>
+                        <div class="info-value">${field('Visual Style')}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Rating</div>
@@ -1869,8 +2121,17 @@
                     </div>
                     <div class="info-item">
                         <div class="info-label">Date Added</div>
-                        <div class="info-value">${ad['Date Added'] || 'N/A'}</div>
+                        <div class="info-value">${field('Date Added')}</div>
                     </div>
+                    ${ad['Structure'] ? `
+                        <div class="info-item">
+                            <div class="info-label">Video Script Framework</div>
+                            <div class="info-value">${(ad['Structure'] || '').split(';').map(s => s.trim()).filter(s => s).map(s => {
+                                const num = (s.match(/^\d{2}/) || [''])[0];
+                                return num ? `<a href="frameworks.html#${num}">${escapeHtml(s)}</a>` : escapeHtml(s);
+                            }).join('<br>')}</div>
+                        </div>
+                    ` : ''}
                 </div>
 
                 ${ad['Video Transcript'] ? `
@@ -1930,13 +2191,13 @@
             if (isVideo) {
                 content.innerHTML = `
                     <video controls autoplay style="max-width: 90vw; max-height: 90vh; border-radius: 8px;">
-                        <source src="${mediaUrl}" type="video/${mediaUrl.toLowerCase().endsWith('.mov') ? 'quicktime' : 'mp4'}">
+                        <source src="${safeUrl(mediaUrl)}" type="video/${mediaUrl.toLowerCase().endsWith('.mov') ? 'quicktime' : 'mp4'}">
                         Your browser does not support video playback.
                     </video>
                 `;
             } else {
                 content.innerHTML = `
-                    <img src="${mediaUrl}" alt="Full size preview" style="max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px;">
+                    <img src="${safeUrl(mediaUrl)}" alt="Full size preview" style="max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px;">
                 `;
             }
 
@@ -1964,12 +2225,105 @@
                 closeLightbox();
                 closeInfoModal();
                 closeTagModal();
+                closeWinnerModal();
             }
         });
 
+        // Confirmed Winner Functions
+        let currentWinnerRow = null;
+
+        function openWinnerModal(row) {
+            const ad = findAd(row);
+            if (!ad) return;
+            currentWinnerRow = row;
+            const marked = isWinner(ad);
+            document.getElementById('winnerModalTitle').textContent = marked ? 'Confirmed winner' : 'Mark as confirmed winner';
+            const note = document.getElementById('winnerNote');
+            note.value = (ad['Winner Note'] || '').slice(0, WINNER_NOTE_MAX);
+            updateWinnerNoteCount();
+            document.getElementById('winnerSaveBtn').textContent = marked ? 'Save note' : 'Mark as winner';
+            document.getElementById('winnerRemoveBtn').style.display = marked ? 'block' : 'none';
+            showWinnerError('');
+            document.getElementById('winnerModal').classList.add('active');
+            note.focus();
+        }
+
+        function closeWinnerModal() {
+            document.getElementById('winnerModal').classList.remove('active');
+            currentWinnerRow = null;
+        }
+
+        function updateWinnerNoteCount() {
+            document.getElementById('winnerNoteCount').textContent =
+                `${document.getElementById('winnerNote').value.length} / ${WINNER_NOTE_MAX}`;
+        }
+
+        function showWinnerError(message) {
+            const box = document.getElementById('winnerError');
+            box.textContent = message;
+            box.classList.toggle('active', !!message);
+        }
+
+        // Saves through n8n. The page only changes once the sheet has been written:
+        // any failure (bad response, network, blocked request) leaves the badge as it was.
+        async function saveWinner(winner) {
+            const ad = findAd(currentWinnerRow);
+            if (!ad) return;
+            const note = winner ? document.getElementById('winnerNote').value.trim() : '';
+            if (note.length > WINNER_NOTE_MAX) {
+                showWinnerError(`The note is ${note.length} characters. The limit is ${WINNER_NOTE_MAX}.`);
+                return;
+            }
+
+            const saveBtn = document.getElementById('winnerSaveBtn');
+            const removeBtn = document.getElementById('winnerRemoveBtn');
+            const saveLabel = saveBtn.textContent;
+            saveBtn.disabled = true;
+            removeBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            showWinnerError('');
+
+            try {
+                const response = await fetch(CONFIG.updateWinnerWebhook, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        row: ad._row,
+                        adLink: ad['Ad Link'] || '',
+                        brand: ad['Brand/Advertiser'] || '',
+                        winner: winner,
+                        note: note
+                    })
+                });
+
+                let result = null;
+                try { result = await response.json(); } catch (e) { /* no readable body */ }
+                if (!response.ok || !result || result.ok !== true) {
+                    throw new Error((result && result.error) || `the server answered ${response.status}`);
+                }
+
+                ad['Confirmed Winner'] = winner ? 'Yes' : '';
+                ad['Winner Note'] = note;
+                populateFilters();
+                applyFilters();
+                closeWinnerModal();
+            } catch (error) {
+                console.error('Error saving confirmed winner:', error);
+                const reason = error instanceof TypeError ? 'could not reach the server' : (error.message || 'unknown error');
+                showWinnerError('Not saved: ' + reason + '. Nothing was changed.');
+            } finally {
+                saveBtn.disabled = false;
+                removeBtn.disabled = false;
+                saveBtn.textContent = saveLabel;
+            }
+        }
+
         // Tag Modal Functions
-        function openTagModal(ad) {
-            currentAdForTagEdit = ad;
+        function openTagModal(row) {
+            const ad = findAd(row);
+            if (!ad) return;
+            // A copy, so tags changed in the dialog only reach the ad once they are saved
+            currentAdForTagEdit = { ...ad };
             const modal = document.getElementById('tagModal');
             modal.classList.add('active');
             renderCurrentTags();
@@ -1994,8 +2348,8 @@
 
             container.innerHTML = tags.map(tag => `
                 <div class="current-tag-chip">
-                    ${tag}
-                    <button class="remove-tag" onclick="removeTag('${tag}')">×</button>
+                    ${escapeHtml(tag)}
+                    <button class="remove-tag" data-tag="${escapeHtml(tag)}" onclick="removeTag(this.dataset.tag)">×</button>
                 </div>
             `).join('');
         }
@@ -2026,7 +2380,7 @@
             }
 
             suggestionsDiv.innerHTML = matchingTags.map(tag => `
-                <div class="tag-suggestion-item" onclick="addTagFromSuggestion('${tag}')">${tag}</div>
+                <div class="tag-suggestion-item" data-tag="${escapeHtml(tag)}" onclick="addTagFromSuggestion(this.dataset.tag)">${escapeHtml(tag)}</div>
             `).join('');
 
             suggestionsDiv.classList.add('active');
@@ -2072,7 +2426,7 @@
                     throw new Error('Failed to save tags');
                 }
 
-                const adIndex = allAds.findIndex(ad => ad['Ad Link'] === currentAdForTagEdit['Ad Link']);
+                const adIndex = allAds.findIndex(ad => ad._row === currentAdForTagEdit._row);
                 if (adIndex !== -1) {
                     allAds[adIndex]['Interface Tags'] = currentAdForTagEdit['Interface Tags'];
                 }
@@ -2128,6 +2482,14 @@
                 closeTagModal();
             }
         });
+
+        document.getElementById('winnerModal').addEventListener('click', (e) => {
+            if (e.target.id === 'winnerModal') {
+                closeWinnerModal();
+            }
+        });
+
+        document.getElementById('winnerNote').addEventListener('input', updateWinnerNoteCount);
 
         document.getElementById('infoModal').addEventListener('click', (e) => {
             if (e.target.id === 'infoModal') {
