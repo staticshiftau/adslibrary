@@ -309,10 +309,17 @@
             color: #64748b;
         }
 
+        /* Three across on a desktop screen, two on a tablet, one on a phone */
         .ads {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .ads {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         .ad {
@@ -361,11 +368,13 @@
             background: #f0f2f5;
         }
 
+        /* Sized by shape, not a fixed height, so a video is never stretched */
         .ad-media iframe,
         .ad-media video {
             display: block;
             width: 100%;
-            height: 480px;
+            aspect-ratio: 4 / 5;
+            height: auto;
             border: none;
         }
 
