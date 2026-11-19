@@ -405,6 +405,108 @@
                                                       ]
                                                   ]
                                      }
+                       },
+                       {
+                           "number":  "08",
+                           "title":  "Single-objection retargeting",
+                           "length":  "30-45 seconds (about 80-110 words).",
+                           "job":  "tell a warm viewer you know they\u0027re undecided, name the one objection holding them back, answer it with what people who went ahead got, and give a date.",
+                           "awareness":  "most aware. They\u0027ve seen the offer and haven\u0027t acted. Warm traffic only.",
+                           "proof":  "one result with a timeframe, plus a volume number if you have one.",
+                           "quotesHeld":  false,
+                           "beats":  {
+                                         "headers":  [
+                                                         "Time",
+                                                         "Beat",
+                                                         "What it does",
+                                                         "WPWI\u0027s line"
+                                                     ],
+                                         "rows":  [
+                                                      [
+                                                          "0-5s",
+                                                          "**Name the mental state**",
+                                                          "Tells the viewer you know they\u0027ve been looking and haven\u0027t decided",
+                                                          "\"We can see you\u0027re looking at the National Workplace Wellbeing Conference and you\u0027re still sitting on the fence.\""
+                                                      ],
+                                                      [
+                                                          "5-18s",
+                                                          "**Name the objection, then the timeframed counter**",
+                                                          "Says the exact objection in their words, then what people who went ahead got, inside a window",
+                                                          "\"If you\u0027re thinking two days out of the business is too much... leaders who invest in themselves for two days see reduced staff turnover, increased team performance and less burnout within 90 days.\""
+                                                      ],
+                                                      [
+                                                          "18-25s",
+                                                          "**Cost of inaction**",
+                                                          "Reframes the cost as a saving against a bigger cost later",
+                                                          "\"Two days of self development now will reduce time and money spent on fixing problems months later.\""
+                                                      ],
+                                                      [
+                                                          "25-30s",
+                                                          "**Volume and a hard date**",
+                                                          "Social proof and a deadline in one line",
+                                                          "\"Join us and 300 other professionals on the 16th and 17th of September in Brisbane.\""
+                                                      ],
+                                                      [
+                                                          "30-35s",
+                                                          "**CTA**",
+                                                          "One action",
+                                                          "\"Click the link below to secure your seat for the National Workplace Wellbeing Conference.\""
+                                                      ]
+                                                  ]
+                                     }
+                       },
+                       {
+                           "number":  "09",
+                           "title":  "Diagnostic pause",
+                           "length":  "60-90 seconds (about 170-240 words).",
+                           "job":  "ask a question the viewer can\u0027t answer, name the silence, explain why the whole category fails them, then redefine what you offer as a different kind of thing.",
+                           "awareness":  "unaware to problem aware. They\u0027ve tried the category before and it didn\u0027t stick.",
+                           "proof":  "light. The viewer\u0027s own memory does the persuading. The redefinition has to be true of what you actually deliver.",
+                           "quotesHeld":  false,
+                           "beats":  {
+                                         "headers":  [
+                                                         "Time",
+                                                         "Beat",
+                                                         "Line pattern"
+                                                     ],
+                                         "rows":  [
+                                                      [
+                                                          "0-5s",
+                                                          "**Diagnostic question**",
+                                                          "Ask them to name one lasting effect of the last comparable thing they did. The silence is the point, not the answer"
+                                                      ],
+                                                      [
+                                                          "5-8s",
+                                                          "**Name the pause**",
+                                                          "\"That pause you just felt is the whole problem.\""
+                                                      ],
+                                                      [
+                                                          "8-25s",
+                                                          "**Why the category fails**",
+                                                          "Information alone doesn\u0027t compound. \"You fly home fired up, and by Thursday you\u0027re back to the old playbook.\" A mechanism, not a claim"
+                                                      ],
+                                                      [
+                                                          "25-45s",
+                                                          "**The reveal**",
+                                                          "\"You already know the right things to do. That was never the gap.\" Then one specific moment that names the real gap"
+                                                      ],
+                                                      [
+                                                          "45-60s",
+                                                          "**Category redefinition**",
+                                                          "\"This is not a [old category]. It\u0027s a [new category].\""
+                                                      ],
+                                                      [
+                                                          "60-70s",
+                                                          "**The money line**",
+                                                          "One sentence, as short as it will go. \"You don\u0027t leave with information. You leave different.\""
+                                                      ],
+                                                      [
+                                                          "70-90s",
+                                                          "**Place, scarcity, CTA**",
+                                                          "Where and when, how many places, one action"
+                                                      ]
+                                                  ]
+                                     }
                        }
                    ]
 }
