@@ -69,6 +69,58 @@
             max-width: 720px;
         }
 
+        .media-filter {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .media-filter-label {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-right: 4px;
+        }
+
+        .media-filter-btn {
+            padding: 8px 16px;
+            background: transparent;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 18px;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .media-filter-btn:hover {
+            border-color: #94a3b8;
+        }
+
+        .media-filter-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .media-filter-btn:focus-visible {
+            outline: 3px solid #a5b4fc;
+            outline-offset: 2px;
+        }
+
+        .ad-type {
+            float: right;
+            margin-left: 8px;
+            padding: 2px 8px;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
         .status {
             padding: 40px 16px;
             text-align: center;
@@ -415,6 +467,12 @@
 
     <main class="page">
         <p class="intro">The structures we write video ads on. Open one to see its beats, then the real ads it came from.</p>
+        <div class="media-filter" role="group" aria-label="Show ads by type">
+            <span class="media-filter-label">Show ads:</span>
+            <button class="media-filter-btn active" data-media="all" aria-pressed="true" onclick="setMediaFilter(this.dataset.media)">All</button>
+            <button class="media-filter-btn" data-media="video" aria-pressed="false" onclick="setMediaFilter(this.dataset.media)">Video</button>
+            <button class="media-filter-btn" data-media="image" aria-pressed="false" onclick="setMediaFilter(this.dataset.media)">Image</button>
+        </div>
         <div id="frameworks"><div class="status">Loading frameworks...</div></div>
     </main>
 
@@ -467,7 +525,40 @@
         function adsFor(number) {
             if (!ads) return [];
             return ads.filter(ad => (ad['Structure'] || '').split(';')
-                .some(part => (part.trim().match(/^\d{2}/) || [''])[0] === number));
+                .some(part => (part.trim().match(/^\d{2}/) || [''])[0] === number))
+                .filter(ad => mediaFilter === 'all' || mediaKind(ad) === mediaFilter);
+        }
+
+        // 'video' or 'image'. Carousels and statics both count as image.
+        let mediaFilter = 'all';
+
+        function mediaKind(ad) {
+            const type = (ad['Ad Type'] || '').trim().toLowerCase();
+            return (type === 'video' || (ad['Video URL'] || '').trim()) ? 'video' : 'image';
+        }
+
+        function countLabel(count) {
+            const kind = mediaFilter === 'all' ? '' : mediaFilter + ' ';
+            return `${count} ${kind}${count === 1 ? 'ad' : 'ads'}`;
+        }
+
+        // Changes which ads show, without closing any framework that is open
+        function setMediaFilter(kind) {
+            if (!['all', 'video', 'image'].includes(kind)) return;
+            mediaFilter = kind;
+            document.querySelectorAll('.media-filter-btn').forEach(button => {
+                const on = button.dataset.media === kind;
+                button.classList.toggle('active', on);
+                button.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            document.querySelectorAll('.framework').forEach(section => {
+                const framework = frameworks.find(f => f.number === section.dataset.number);
+                if (!framework) return;
+                const chip = section.querySelector('.chip.ads');
+                if (chip) chip.textContent = countLabel(adsFor(framework.number).length);
+                const adsBox = section.querySelector('.framework-ads');
+                if (adsBox) adsBox.innerHTML = adsSectionHtml(framework);
+            });
         }
 
         async function loadFrameworks() {
@@ -539,6 +630,7 @@
             return `
                 <article class="ad">
                     <div class="ad-head">
+                        <span class="ad-type">${mediaKind(ad) === 'video' ? 'Video' : 'Image'}</span>
                         <div class="ad-brand">${escapeHtml(ad['Brand/Advertiser'] || 'Unknown advertiser')}</div>
                         ${ad['Ad Headline'] ? `<div class="ad-headline">${escapeHtml(ad['Ad Headline'])}</div>` : ''}
                         ${isWinner(ad) ? `
@@ -562,7 +654,11 @@
             if (adsError) return '<div class="empty">The ads could not be loaded right now. The beats above are still correct. Try again in a minute.</div>';
             if (ads === null) return '<div class="empty">Loading ads...</div>';
             const matched = adsFor(framework.number);
-            if (!matched.length) return '<div class="empty">No ads filed under this structure yet</div>';
+            if (!matched.length) {
+                return mediaFilter === 'all'
+                    ? '<div class="empty">No ads filed under this structure yet</div>'
+                    : `<div class="empty">No ${mediaFilter} ads filed under this structure yet</div>`;
+            }
             return `<div class="ads">${matched.map(adHtml).join('')}</div>`;
         }
 
@@ -615,7 +711,7 @@
                                 <div class="framework-job">${richText(capFirst(framework.job))}</div>
                                 <div class="framework-meta">
                                     <span class="chip">${richText(String(framework.length || '').split('(')[0].trim())}</span>
-                                    ${count === null ? '' : `<span class="chip ads">${count} ${count === 1 ? 'ad' : 'ads'}</span>`}
+                                    ${count === null ? '' : `<span class="chip ads">${countLabel(count)}</span>`}
                                 </div>
                             </span>
                             <span class="framework-chevron">▶</span>
