@@ -9,7 +9,7 @@
                            "job":  "name a state the viewer is stuck in, agree it can\u0027t last, kill the fixes they\u0027d reach for, and show the system that fixes it.",
                            "awareness":  "problem aware. They know the state. They haven\u0027t found the fix.",
                            "proof":  "one volume number and at least one named or specific result.",
-                           "quotesHeld":  true,
+                           "quotesHeld":  false,
                            "beats":  {
                                          "headers":  [
                                                          "Time",
@@ -28,7 +28,7 @@
                                                           "5-12s",
                                                           "(optional) **How they got here**",
                                                           "Credits them for building it, so the next beat isn\u0027t an attack",
-                                                          ""
+                                                          "MORPH ad 5: \"You built this business to 2 million, 5 million or 10 million a year off of your network, referrals and having a great reputation. But the moment you step out of sales... growth stops.\""
                                                       ],
                                                       [
                                                           "12-20s",
@@ -52,7 +52,7 @@
                                                           "42-50s",
                                                           "(optional) **Named result**",
                                                           "Person, company, figure, timeframe",
-                                                          ""
+                                                          "MORPH ad 5: \"Brooks from Pipeline Formula added $1.8 million in revenue closed... in six months.\""
                                                       ],
                                                       [
                                                           "50-60s",
@@ -131,48 +131,56 @@
                            "job":  "open on the outcome the viewer wants, say what delivers it, and prove it fast.",
                            "awareness":  "solution aware. They want the result and are weighing ways to get it.",
                            "proof":  "one volume number and one or two named results. With no proof, use 04.",
-                           "quotesHeld":  true,
+                           "quotesHeld":  false,
                            "beats":  {
                                          "headers":  [
                                                          "Time",
                                                          "Beat",
-                                                         "What it does"
+                                                         "What it does",
+                                                         "MORPH\u0027s line (ad 4)"
                                                      ],
                                          "rows":  [
                                                       [
                                                           "0-4s",
                                                           "**Desire hook**",
-                                                          "The outcome, as a question"
+                                                          "The outcome, as a question",
+                                                          "\"What if every client that you close brought you two to three new clients in the next month?\""
                                                       ],
                                                       [
                                                           "4-11s",
                                                           "**\"That\u0027s what X does\"** + one contrast",
-                                                          "Names the mechanism as the answer, then says what it isn\u0027t"
+                                                          "Names the mechanism as the answer, then says what it isn\u0027t",
+                                                          "\"That\u0027s what a revenue flywheel does. And it\u0027s not a campaign or an agency that you have to fund every single month to sustain it.\""
                                                       ],
                                                       [
                                                           "11-15s",
                                                           "**ICP gate**",
-                                                          "Who it\u0027s built for, with a revenue band"
+                                                          "Who it\u0027s built for, with a revenue band",
+                                                          "\"We install it for B2B service companies that are between 2 and $10 million a year.\""
                                                       ],
                                                       [
                                                           "15-24s",
                                                           "**How it gets there**",
-                                                          "One sentence on what the mechanism actually does"
+                                                          "One sentence on what the mechanism actually does",
+                                                          "\"...directly target and find people who are already looking for your solution...\""
                                                       ],
                                                       [
                                                           "24-26s",
                                                           "**Pivot**",
-                                                          "One transition line"
+                                                          "One transition line",
+                                                          "\"Now, there\u0027s only one way to do that.\""
                                                       ],
                                                       [
                                                           "26-41s",
                                                           "**Authority + two quick named results**",
-                                                          "Volume number, then two results in one breath each"
+                                                          "Volume number, then two results in one breath each",
+                                                          "\"$175 million... Brooks from Pipeline Formula added 1.8 million... Jean Michel added 1.2 million in the same time frame.\""
                                                       ],
                                                       [
                                                           "41-49s",
                                                           "**CTA, repeating the desire**",
-                                                          "Restate the hook\u0027s outcome as the reason to click"
+                                                          "Restate the hook\u0027s outcome as the reason to click",
+                                                          "\"So if you want a self-funding acquisition flywheel, then click this ad, answer a few questions to see if you actually qualify.\""
                                                       ]
                                                   ]
                                      }

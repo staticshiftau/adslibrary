@@ -1514,7 +1514,7 @@
             apiKey: 'AIzaSyCUReqio38YB172WFZeFhS-hetFwYoT9CE',  // restricted: Sheets API only, staticshiftau.github.io referrer only
             sheetName: 'Ads Library',
             range: 'A:AB',  // Through Confirmed Winner, Winner Note and Structure
-            updateTagsWebhook: 'https://n8n.srv951152.hstgr.cloud/webhook/ads-library-update-tags',
+            updateTagsWebhook: 'https://n8n.srv1288954.hstgr.cloud/webhook/ads-library-update-tags',
             updateWinnerWebhook: 'https://n8n.srv1288954.hstgr.cloud/webhook/ads-library-update-winner'
         };
 
@@ -2416,19 +2416,25 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    // The ad is found by its sheet row: some ads have no Ad Link and some share one
                     body: JSON.stringify({
-                        adLink: currentAdForTagEdit['Ad Link'],
-                        tags: currentAdForTagEdit['Interface Tags']
+                        row: currentAdForTagEdit._row,
+                        adLink: currentAdForTagEdit['Ad Link'] || '',
+                        brand: currentAdForTagEdit['Brand/Advertiser'] || '',
+                        tags: currentAdForTagEdit['Interface Tags'] || ''
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to save tags');
+                // Only a confirmed write counts as saved
+                let result = null;
+                try { result = await response.json(); } catch (e) { /* no readable body */ }
+                if (!response.ok || !result || result.ok !== true) {
+                    throw new Error((result && result.error) || `the server answered ${response.status}`);
                 }
 
                 const adIndex = allAds.findIndex(ad => ad._row === currentAdForTagEdit._row);
                 if (adIndex !== -1) {
-                    allAds[adIndex]['Interface Tags'] = currentAdForTagEdit['Interface Tags'];
+                    allAds[adIndex]['Interface Tags'] = result.tags;
                 }
 
                 populateSidebarTags();
@@ -2438,7 +2444,8 @@
                 closeTagModal();
             } catch (error) {
                 console.error('Error saving tags:', error);
-                alert('❌ Failed to save tags: ' + error.message);
+                const reason = error instanceof TypeError ? 'could not reach the server' : (error.message || 'unknown error');
+                alert('❌ Tags not saved: ' + reason + '. Nothing was changed.');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Save Tags';
