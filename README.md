@@ -5,7 +5,7 @@ The site at https://staticshiftau.github.io/adslibrary/. GitHub Pages serves `ma
 ## Files
 
 - `index.html` - the library. Reads the "Static Shift Ads Library" Google Sheet (tab `Ads Library`, columns A to AB).
-- `frameworks.html` - the Video Script Frameworks page. Reads `frameworks.json` for the structures and the same sheet for the ads.
+- `frameworks.html` - the Ad Frameworks page. Reads `frameworks.json` for the structures and the same sheet for the ads.
 - `frameworks.json` - generated. Do not edit by hand. It is built from the video ad bank cards by `scripts/build-frameworks-page.ps1` in the project-management repo, which refuses to write anything that is not meant to be public.
 
 ## Things to know

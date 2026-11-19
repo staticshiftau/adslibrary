@@ -1082,7 +1082,7 @@
             z-index: 10;
         }
 
-        /* Link to the Video Script Frameworks page, beside the search box */
+        /* Link to the Ad Frameworks page, beside the search box */
         .top-link {
             flex-shrink: 0;
             padding: 12px 16px;
@@ -1364,7 +1364,7 @@
                 class="global-search-input"
                 placeholder="Search advertiser, headline, copy, transcript, why it works..."
             >
-            <a class="top-link" href="frameworks.html">Video Script Frameworks</a>
+            <a class="top-link" href="frameworks.html">Ad Frameworks</a>
         </div>
     </div>
 
@@ -2125,7 +2125,7 @@
                     </div>
                     ${ad['Structure'] ? `
                         <div class="info-item">
-                            <div class="info-label">Video Script Framework</div>
+                            <div class="info-label">Ad Framework</div>
                             <div class="info-value">${(ad['Structure'] || '').split(';').map(s => s.trim()).filter(s => s).map(s => {
                                 const num = (s.match(/^\d{2}/) || [''])[0];
                                 return num ? `<a href="frameworks.html#${num}">${escapeHtml(s)}</a>` : escapeHtml(s);
