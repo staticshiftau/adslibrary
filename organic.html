@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Organic Posts - Static Shift Ads Library</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #1a1f2e;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 16px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .top-bar-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .page-title { font-size: 20px; font-weight: 700; }
+
+        .top-links { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .top-link {
+            padding: 10px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .top-link:hover { background: #5568d3; }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px 64px;
+        }
+
+        .intro {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            max-width: 720px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .control {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 150px;
+            flex: 1 1 150px;
+        }
+
+        .control label {
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .control select {
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
+            font: inherit;
+            font-size: 14px;
+        }
+
+        .control select:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 2px; }
+
+        .showing {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .status {
+            color: #cbd5e1;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+        .post {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-head { padding: 14px 14px 10px; }
+
+        .post-creator { font-weight: 700; font-size: 15px; }
+
+        .post-meta { color: #64748b; font-size: 13px; margin-top: 2px; }
+
+        .counts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .counts-asat { color: #64748b; font-size: 12px; margin-top: 2px; }
+
+        .post-media {
+            background: #0f172a;
+            aspect-ratio: 9 / 16;
+            max-height: 520px;
+            width: 100%;
+        }
+
+        .post-media iframe, .post-media img, .post-media video {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            object-fit: contain;
+            display: block;
+        }
+
+        .no-media {
+            color: #94a3b8;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .post-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+        .hook-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+        }
+
+        .hook-text { font-size: 14px; line-height: 1.4; margin-top: 2px; }
+
+        .hook-text.onscreen { font-weight: 700; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+        .chip {
+            font-size: 12px;
+            padding: 3px 9px;
+            border-radius: 12px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-weight: 600;
+        }
+
+        .chip.pairing { background: #fef3c7; color: #92400e; }
+
+        .toggle {
+            align-self: flex-start;
+            background: none;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .toggle:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 2px; }
+
+        .details { display: none; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; }
+
+        .details.open { display: flex; }
+
+        .details h3 { font-size: 13px; color: #475569; }
+
+        .details p, .details .pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+        .details .transcript { max-height: 240px; overflow-y: auto; background: #f8fafc; padding: 8px; border-radius: 6px; }
+
+        .post-link { color: #4f46e5; font-weight: 600; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <h1 class="page-title">Organic Posts</h1>
+            <div class="top-links">
+                <a class="top-link" href="index.html">← Ads Library</a>
+                <a class="top-link" href="frameworks.html">Ad Frameworks</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="page">
+        <p class="intro">Organic videos we learn from, with the written hook on screen and the spoken hook side by side. Likes, comments and views are a snapshot from the date shown, and some creators boost their best posts with paid spend, so very high view counts may not be organic.</p>
+
+        <div class="controls">
+            <div class="control"><label for="sort">Sort by</label>
+                <select id="sort">
+                    <option value="Views">Most views</option>
+                    <option value="Likes">Most likes</option>
+                    <option value="Comments">Most comments</option>
+                    <option value="Posted On">Newest</option>
+                </select>
+            </div>
+            <div class="control"><label for="f-Creator">Creator</label><select id="f-Creator" data-field="Creator"></select></div>
+            <div class="control"><label for="f-Hook Pairing">Hook pairing</label><select id="f-Hook Pairing" data-field="Hook Pairing"></select></div>
+            <div class="control"><label for="f-Hook Type">Hook type</label><select id="f-Hook Type" data-field="Hook Type"></select></div>
+            <div class="control"><label for="f-Structure">Structure</label><select id="f-Structure" data-field="Structure"></select></div>
+            <div class="control"><label for="f-Format">Format</label><select id="f-Format" data-field="Format"></select></div>
+        </div>
+        <div class="showing" id="showing"></div>
+        <div id="posts"><div class="status">Loading posts...</div></div>
+    </main>
+
+    <script>
+        // Helpers copied from frameworks.html (escaping, safe links, Drive ids, image retry).
+        // A change to how creatives render has to be made in all three pages.
+        const CONFIG = {
+            spreadsheetId: '1nY2bWQfArOSVuJycBQdEL2VP1UgGFiLzglxPmIIHXaw',
+            apiKey: 'AIzaSyCUReqio38YB172WFZeFhS-hetFwYoT9CE',  // restricted: Sheets API only, staticshiftau.github.io referrer only
+            sheetName: 'Organic Posts',
+            range: 'A:Z'
+        };
+
+        // The Sheets API key only works from staticshiftau.github.io. On a local preview the page
+        // reads dev-fixture-organic.json instead (a dump of the tab, never committed).
+        const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+        const FILTER_FIELDS = ['Creator', 'Hook Pairing', 'Hook Type', 'Structure', 'Format'];
+
+        let posts = [];
+
+        function escapeHtml(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function safeUrl(value) {
+            const url = String(value == null ? '' : value).trim();
+            return /^https?:\/\//i.test(url) ? escapeHtml(url) : '';
+        }
+
+        function getGoogleDriveFileId(url) {
+            if (!url) return null;
+            const m = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
+            return m ? m[1] : null;
+        }
+
+        function retryImage(img) {
+            const tries = Number(img.dataset.tries || 0);
+            if (tries >= 4) { img.onerror = null; return; }
+            img.dataset.tries = tries + 1;
+            const src = img.src;
+            setTimeout(() => { img.src = ''; img.src = src; }, 1200 * (tries + 1) + Math.random() * 800);
+        }
+
+        // A count cell is a number, or blank when unknown. Blank never becomes 0.
+        function countOf(post, field) {
+            const raw = String(post[field] || '').replace(/,/g, '').trim();
+            if (!raw) return null;
+            const n = Number(raw);
+            return Number.isFinite(n) ? n : null;
+        }
+
+        function shortNumber(n) {
+            if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, '') + 'K';
+            return String(n);
+        }
+
+        function niceDate(value) {
+            const m = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (!m) return escapeHtml(value || '');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${Number(m[3])} ${months[Number(m[2]) - 1]} ${m[1]}`;
+        }
+
+        async function loadPosts() {
+            const url = IS_LOCAL
+                ? 'dev-fixture-organic.json'
+                : `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.spreadsheetId}/values/${encodeURIComponent(CONFIG.sheetName)}!${CONFIG.range}?key=${CONFIG.apiKey}`;
+            const response = await fetch(url, { cache: 'no-cache' });
+            const data = await response.json();
+            if (!response.ok || !data.values) throw new Error('could not load the sheet');
+            const headers = data.values[0] || [];
+            return data.values.slice(1).map((row, i) => {
+                const post = {};
+                headers.forEach((h, idx) => { post[h] = row[idx] || ''; });
+                post._row = i + 2;
+                return post;
+            }).filter(p => (p['Post Link'] || '').trim());
+        }
+
+        function buildFilters() {
+            FILTER_FIELDS.forEach(field => {
+                const select = document.getElementById('f-' + field);
+                const values = [...new Set(posts.map(p => (p[field] || '').trim()).filter(Boolean))].sort();
+                select.innerHTML = `<option value="">All</option>` +
+                    values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+                select.addEventListener('change', render);
+            });
+            document.getElementById('sort').addEventListener('change', render);
+        }
+
+        function mediaHtml(post) {
+            const driveId = getGoogleDriveFileId((post['Video URL'] || '').trim());
+            const title = escapeHtml((post['Creator'] || 'Post') + ' video');
+            if (driveId) {
+                return `<iframe src="https://drive.google.com/file/d/${encodeURIComponent(driveId)}/preview" title="${title}" allow="autoplay" loading="lazy"></iframe>`;
+            }
+            const thumbId = getGoogleDriveFileId((post['Thumbnail URL'] || '').trim());
+            const thumb = thumbId ? `https://lh3.googleusercontent.com/d/${encodeURIComponent(thumbId)}` : safeUrl(post['Thumbnail URL']);
+            if (thumb) return `<img src="${thumb}" alt="${title}" loading="lazy" onerror="retryImage(this)">`;
+            return '<div class="no-media">No video saved. Open the original post.</div>';
+        }
+
+        function countsHtml(post) {
+            const parts = [['Views', 'views'], ['Likes', 'likes'], ['Comments', 'comments']]
+                .map(([field, word]) => {
+                    const n = countOf(post, field);
+                    return n == null ? '' : `<span>${shortNumber(n)} ${word}</span>`;
+                }).filter(Boolean);
+            if (!parts.length) return '';
+            const asAt = post['Counts As At'] ? `<div class="counts-asat">as at ${niceDate(post['Counts As At'])}</div>` : '';
+            return `<div class="counts">${parts.join('')}</div>${asAt}`;
+        }
+
+        function postHtml(post) {
+            const link = safeUrl(post['Post Link']);
+            const textHook = (post['Text Hook'] || '').trim();
+            const spokenHook = (post['Spoken Hook'] || '').trim();
+            const chips = [
+                post['Hook Pairing'] ? `<span class="chip pairing">${escapeHtml(post['Hook Pairing'])}</span>` : '',
+                post['Hook Type'] ? `<span class="chip">${escapeHtml(post['Hook Type'])}</span>` : '',
+                post['Structure'] ? `<span class="chip">${escapeHtml(post['Structure'])}</span>` : ''
+            ].join('');
+            const section = (title, field, cls) => (post[field] || '').trim()
+                ? `<div><h3>${title}</h3><div class="pre ${cls || ''}">${escapeHtml(post[field])}</div></div>` : '';
+            return `
+                <article class="post">
+                    <div class="post-head">
+                        <div class="post-creator">${escapeHtml(post['Creator'] || post['Handle'] || 'Unknown creator')}</div>
+                        <div class="post-meta">${escapeHtml(post['Platform'] || '')}${post['Posted On'] ? ' · ' + niceDate(post['Posted On']) : ''}${post['Duration'] ? ' · ' + escapeHtml(post['Duration']) : ''}</div>
+                        ${countsHtml(post)}
+                    </div>
+                    <div class="post-media">${mediaHtml(post)}</div>
+                    <div class="post-body">
+                        <div><div class="hook-label">On screen</div><div class="hook-text onscreen">${textHook ? escapeHtml(textHook) : '<em>No written hook</em>'}</div></div>
+                        <div><div class="hook-label">Spoken</div><div class="hook-text">${spokenHook ? escapeHtml(spokenHook) : '<em>No spoken hook</em>'}</div></div>
+                        ${chips ? `<div class="chips">${chips}</div>` : ''}
+                        <button class="toggle" aria-expanded="false" data-row="${post._row}">Show details</button>
+                        <div class="details" id="details-${post._row}">
+                            ${section('Why it works', 'Why It Works')}
+                            ${section('What we can adapt', 'What We Can Adapt')}
+                            ${section('Caption', 'Caption')}
+                            ${section('Transcript', 'Transcript', 'transcript')}
+                        </div>
+                        ${link ? `<a class="post-link" href="${link}" target="_blank" rel="noopener noreferrer">View original post</a>` : ''}
+                    </div>
+                </article>`;
+        }
+
+        function render() {
+            const active = {};
+            FILTER_FIELDS.forEach(f => { active[f] = document.getElementById('f-' + f).value; });
+            const sortField = document.getElementById('sort').value;
+            const shown = posts
+                .filter(p => FILTER_FIELDS.every(f => !active[f] || (p[f] || '').trim() === active[f]))
+                .sort((a, b) => {
+                    if (sortField === 'Posted On') return String(b['Posted On']).localeCompare(String(a['Posted On']));
+                    const x = countOf(a, sortField), y = countOf(b, sortField);
+                    if (x == null && y == null) return 0;
+                    if (x == null) return 1;   // unknown counts sort last, never as zero
+                    if (y == null) return -1;
+                    return y - x;
+                });
+            document.getElementById('showing').textContent = `Showing ${shown.length} of ${posts.length} posts`;
+            document.getElementById('posts').innerHTML = shown.length
+                ? `<div class="grid">${shown.map(postHtml).join('')}</div>`
+                : '<div class="status">No posts match these filters.</div>';
+        }
+
+        // One listener for every details button: buttons carry only the row number
+        document.getElementById('posts').addEventListener('click', event => {
+            const button = event.target.closest('.toggle');
+            if (!button) return;
+            const row = Number(button.dataset.row);
+            const panel = document.getElementById('details-' + row);
+            if (!panel) return;
+            const open = panel.classList.toggle('open');
+            button.setAttribute('aria-expanded', String(open));
+            button.textContent = open ? 'Hide details' : 'Show details';
+        });
+
+        (async function init() {
+            try {
+                posts = await loadPosts();
+                buildFilters();
+                render();
+            } catch (error) {
+                console.error('Error loading organic posts:', error);
+                document.getElementById('posts').innerHTML = '<div class="status">Could not load the organic posts. Try again in a minute.</div>';
+            }
+        })();
+    </script>
+</body>
+</html>
